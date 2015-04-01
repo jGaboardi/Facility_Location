@@ -10,7 +10,7 @@
 #	34 --> other imports may be necessary
 #	66 --> 'c##' needs to changed depending on data and constraint number based on .lp file
 #	83 --> 'c##' needs to changed depending on data and constraint number based on .lp file
-#	83 --> '= ##\n' needs to changed for 
+#	83 --> '= ##\n' needs to changed for the number of facilities to be sited
 
 #   Terminology & General Background for Facility Location and Summation Notation:
 
@@ -25,8 +25,8 @@
 #   *   [Cij] - travel costs between nodes
 #   *   [Sij] - weighted travel costs [(Ai)(Cij)]
 #   *   [Z] - the sum of the weighted travel costs between all origins and destinations multiplied by the decision variables 
-#   *   [x1_1] - the decision variable in first row, first column position in the matrix
-#   *	[y1] - service facility in the first row
+#   *   [x#_#] - the decision variable in # row, # column position in the matrix
+#   *	[y#] - service facility in the # row
 #   *   [p] - the number of facilities to be sited
 
 #    1. IMPORTS
