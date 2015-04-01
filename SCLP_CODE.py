@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Set Cover Facility Location Problem
 # This script creates a linear programming file to be read into an optimizer.
 '''
@@ -64,11 +65,11 @@ def Served_Nodes(rows):
                 outtext = 0
             Aij.append(outtext)
     Aij = np.array(Aij)
-    Aij = Aij.reshape(#,#)
+    Aij = Aij.reshape(4,4)
     rows, cols = Aij.shape
 # Step 2:
 # Create Constraints
-counter = 0
+    counter = 0
     outtext1 = ''
     for i in range(rows):
         counter = counter + 1
@@ -76,14 +77,14 @@ counter = 0
         for j in range(cols):
             temp += str(Aij[i,j]) + 'x' + str(j+1) + ' + '
         outtext1 += temp[:-2] + '>= 1\n'
-return outtext1
+    return outtext1
 
 #    Binaries
 def set_cover_binaries(cols):
     outtext = ''
     for i in range(1, rows + 1):
         temp = ''
-        temp += 'x' + str(i) + '\n'
+        temp += ' x' + str(i) + '\n'
         outtext += temp #+ ' + '
     #outtext = outtext[:-2]
     return outtext
@@ -98,8 +99,12 @@ def set_cover_binaries(cols):
 ##########           15, 11, 10, 0]
 ########## Read Cij in as a vector text file.
 '''
+
+Cij = np.array([ 0, 13, 8, 15, 3, 0, 12, 11, 8, 12, 0, 10, 15, 11, 10, 0])
+'''
 Cij = np.fromfile('path/Cij.txt', dtype=int, sep='\n')
-Cij = Cij.reshape(#, #)
+'''
+Cij = Cij.reshape(4, 4)
 rows, cols = Cij.shape
 
 
@@ -125,6 +130,6 @@ text += "© James Gaboardi, 2015"
 
 #   5. CREATE & WRITE .lp FILE TO DISK
 # Fill path name  --  File name must not have spaces.
-outfile = open('path/name.lp', 'w')
+outfile = open('/Users/jgaboardi/Desktop/test.lp', 'w')
 outfile.write(text)
 outfile.close()
