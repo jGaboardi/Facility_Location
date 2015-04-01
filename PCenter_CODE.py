@@ -1,16 +1,23 @@
 #p-Center Facility Location Problem
 #This script creates a linear programming file to be read into an optimizer.
+'''
+GNU LESSER GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
 
+ Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+'''
 # Developed by:  James D. Gaboardi, MSGIS
 #                03/2015
 #                © James Gaboardi
 
-# **Attention** **Adjust the following**
-#	57 --> 'c##' needs to changed depending on data and constraint number based on .lp file
-#	57 --> '= ##\n' needs to changed for the number of facilities to be sited
-#	62 --> 'c##' needs to changed depending on data and constraint number based on .lp file
-#	74 --> 'c##' needs to changed depending on data and constraint number based on .lp file
 
+# **Attention** **Adjust the following**
+#	66 --> 'c##' needs to changed depending on data and constraint number based on .lp file
+#	66 --> '= ##\n' needs to changed for the number of facilities to be sited
+#	71 --> 'c##' needs to changed depending on data and constraint number based on .lp file
+#	83 --> 'c##' needs to changed depending on data and constraint number based on .lp file
 
 #   Terminology & General Background for Facility Location and Summation Notation:
 
@@ -27,9 +34,11 @@
 #   *	[y#] - service facility in the # row
 #   *   [p] - the number of facilities to be sited
 
+
 #    1. IMPORTS
 # Other imports may be necessary for matrix creation and manipulation 
 import numpy as np
+
 
 #    2. DEFINED FUNCTIONS
 # Assignment Constraints
@@ -116,25 +125,28 @@ def get_facility_decision_variables_p_center(rows):
     #outtext += temp
     return outtext    
 
-#    3. DATA READS & VARIABLE DECLARATION
-########## Cost Matrix
-########## Cij -->  [0, 13, 8, 15, 
-##########			13, 0, 12, 11, 
-##########			8, 12, 0, 10, 
-##########			15, 11, 10, 0]
-########## Read Cij in as a vector text file.
 
+#    3. DATA READS & VARIABLE DECLARATION
 '''
+########## Cost Matrix
+########## Cij -->  [ 0, 13, 8, 15, 
+##########			 13, 0, 12, 11, 
+##########			  8, 12, 0, 10, 
+##########			 15, 11, 10, 0]
+########## Read Cij in as a vector text file.
+'''
+
 Cij = np.fromfile('path/Cij.txt', dtype=float, sep='\n')
-'''
 Cij = Cij.reshape(#, #)
 rows,cols = Cij.shape
 
+
 #    4. START TEXT FOR .lp FILE
 # Declaration of Objective Function
-text = 'Minimize\n'
+text = "p-Center Facility Location Problem\n"
+text += "'''\n"
+text += 'Minimize\n'
 text += ' obj: W\n'
-
 # Declaration of Constraints
 text += 'Subject To\n'                    
 text += get_assignment_constraints(rows)
@@ -150,8 +162,10 @@ text += 'Binaries\n'
 text += get_decision_variables_p_center(Cij)
 text += get_facility_decision_variables_p_center(rows)
 text += '\n'
-text += 'End'
-#print text                
+text += 'End\n'
+text += "'''\n"
+text += "© James Gaboardi, 2015"
+                
 
 #   5. CREATE & WRITE .lp FILE TO DISK
 # Fill path name  --  File name must not have spaces.

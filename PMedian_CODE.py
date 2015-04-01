@@ -1,16 +1,22 @@
 #p-Median Facility Location Problem
 #This script creates a linear programming file to be read into an optimizer.
+'''
+GNU LESSER GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
 
+ Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+'''
 # Developed by:  James D. Gaboardi, MSGIS
 #                03/2015
 #                © James Gaboardi
 
 
 # **Attention** **Adjust the following**
-#	34 --> other imports may be necessary
-#	66 --> 'c##' needs to changed depending on data and constraint number based on .lp file
-#	83 --> 'c##' needs to changed depending on data and constraint number based on .lp file
-#	83 --> '= ##\n' needs to changed for the number of facilities to be sited
+#	74 --> 'c##' needs to changed depending on data and constraint number based on .lp file
+#	91 --> 'c##' needs to changed depending on data and constraint number based on .lp file
+#	91 --> '= ##\n' needs to changed for the number of facilities to be sited
 
 #   Terminology & General Background for Facility Location and Summation Notation:
 
@@ -29,9 +35,11 @@
 #   *	[y#] - service facility in the # row
 #   *   [p] - the number of facilities to be sited
 
+
 #    1. IMPORTS
 # Other imports may be necessary for matrix creation and manipulation 
 import numpy as np
+
 
 #    2. DEFINED FUNCTIONS
 # Objective Function 
@@ -115,22 +123,22 @@ def get_facility_decision_variables_p_median(rows):
     for i in range (1, rows+1):
         outtext += ' y' + str(i) + ' '
     return outtext
+ 
     
 #    3. DATA READS & VARIABLE DECLARATION
-########## Weights Vector
+'''
+########## Weights Matrix
 ########## Sij -->  [0,     13000,  8000, 15000,
 ##########           15600,     0, 14400, 13200,
 ##########           8800,  13200,     0, 11000,
 ##########           18750, 13750, 12500,     0]
 ########## Read Sij in as a vector text file.
-
 '''
 Ai = np.fromfile('path/Ai.txt', dtype=int, sep='\n')
 Ai = Ai.reshape(#, #)
 Cij = np.fromfile('path/Cij.txt', dtype=float, sep='\n')
 Cij = Cij.reshape(#, #)
 Sij = Ai * Cij
-'''
 
 # Cost Coefficients for Allocation Decision Variables
 Sij = np.fromfile('path/Sij.txt', dtype=int, sep='\n')
@@ -138,9 +146,12 @@ Sij = np.fromfile('path/Sij.txt', dtype=int, sep='\n')
 Sij = Sij.reshape(3,4)
 rows, cols = Sij.shape
 
+
 #    4. START TEXT FOR .lp FILE
 # Declaration of Objective Function
-text = 'Minimize\n'          
+text = "p-Median Facility Location Problem\n"
+text += "'''\n"
+text += 'Minimize\n'          
 text += get_objective_function_p_median(Sij)
 # Declaration of Constraints
 text += 'Subject To\n'                    
@@ -155,13 +166,14 @@ text += get_bounds_facility(Sij)
 text += 'Binaries\n'
 text += get_allocation_decision_variables_p_median(Sij)
 text += get_facility_decision_variables_p_median(rows)
-text += '\nEnd'
-#print text                
+text += '\n'
+text += 'End\n'
+text += "'''\n"
+text += "© James Gaboardi, 2015"                
+
 
 #   5. CREATE & WRITE .lp FILE TO DISK
 # Fill path name  --  File name must not have spaces.
 outfile = open('path/name.lp', 'w')
 outfile.write(text)
 outfile.close()
-
-# © James Gaboardi, 2015
