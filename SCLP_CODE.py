@@ -15,12 +15,12 @@ GNU LESSER GENERAL PUBLIC LICENSE
 
 
 # **Attention** **Adjust the following**
-#	57 --> S = # needs to changed for the definition of 'S'
+#	Line 57 --> S = # needs to changed for the definition of 'S'
 
 #   Terminology & General Background for Facility Location and Summation Notation:
 
-#   *        The objective of the Set Cover Facility Location Problem is to minimize the average cost
-#            of travel (between service facilities and clients).
+#   *        The objective of the Set Cover Facility Location Problem is to site the minimum number of
+#            of facilties within S to achieve total coverage.
 
 #   *   [i] - a specific origin
 #   *   [j] - a specifc destination
