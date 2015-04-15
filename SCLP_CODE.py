@@ -20,7 +20,7 @@ GNU LESSER GENERAL PUBLIC LICENSE
 #   Terminology & General Background for Facility Location and Summation Notation:
 
 #   *        The objective of the Set Cover Facility Location Problem is to site the minimum number of
-#            of facilties within S to achieve total coverage.
+#            of facilities within S to achieve total coverage.
 
 #   *   [i] - a specific origin
 #   *   [j] - a specifc destination
@@ -40,7 +40,7 @@ import numpy as np
 
 
 #    2. Defined Functions
-# The objective of this function is to minimize the number of additional facilties needed for complete coverage.
+# The objective of this function is to minimize the number of additional facilities needed for complete coverage.
 def set_cover_objective_function(rows):
     outtext = ' obj: '
     for i in range(1, rows + 1):

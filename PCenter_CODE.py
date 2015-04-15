@@ -29,7 +29,7 @@ GNU LESSER GENERAL PUBLIC LICENSE
 #   *   [n] - the set of origins
 #   *   [m] - the set of destinations
 #   *   [Cij] - travel costs between nodes
-#   *   [W] - the maximum travel costs between service facilties and clients 
+#   *   [W] - the maximum travel costs between service facilities and clients 
 #   *   [x#_#] - the decision variable in # row, # column position in the matrix
 #   *	[y#] - service facility in the # row
 #   *   [p] - the number of facilities to be sited
