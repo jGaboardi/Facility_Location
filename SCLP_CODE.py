@@ -26,7 +26,7 @@ GNU LESSER GENERAL PUBLIC LICENSE
 #   *   [j] - a specifc destination
 #   *   [n] - the set of origins
 #   *   [m] - the set of destinations
-#   *   [Aij] - binary matrix of of nodes within S
+#   *   [Aij] - binary matrix of nodes within S
 #   *   [Cij] - travel costs between nodes
 #   *   [Dij] - distnace from i to j
 #   *   [S] - defined distance from node
@@ -130,6 +130,6 @@ text += "© James Gaboardi, 2015"
 
 #   5. CREATE & WRITE .lp FILE TO DISK
 # Fill path name  --  File name must not have spaces.
-outfile = open('/Users/jgaboardi/Desktop/test.lp', 'w')
+outfile = open('/path/name.lp', 'w')
 outfile.write(text)
 outfile.close()
