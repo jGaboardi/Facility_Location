@@ -96,7 +96,23 @@ def get_p_facilities(rows):
     outtext = ' c5:  ' + outtext[:-2] + '<= 2\n'
     return outtext
 
-#    Binaries
+# Declaration of Bounds
+def get_bounds_allocation(Cij):
+    outtext = ''
+    for i in range(rows):
+        temp = ''
+        for j in range(cols):
+            temp += ' 0 <= x' + str(i+1) + '_' + str(j+1) + ' <= 1\n'
+        outtext += temp    
+    return outtext
+
+def get_bounds_facility(Cij):
+    outtext = ''
+    for i in range(rows):
+        outtext += ' 0 <= y' + str(i+1) + ' <= 1\n'
+    return outtext
+    
+# Declaration of Binaries
 def maximum_cover_allocation_binaries(cols):
     outtext = ''
     for i in range(1, rows + 1):
@@ -156,6 +172,12 @@ text += Served_Nodes(rows)
 text += '\n'
 text += get_p_facilities(rows)
 text += '\n'
+# Declaration of Bounds
+text += 'Bounds\n'
+text += get_bounds_allocation(Cij)
+text += '\n'
+text += get_bounds_facility(Cij)
+text += '\n'
 # Declaration of Decision Variables form: Binaries
 text += 'Binaries\n'
 text += maximum_cover_allocation_binaries(rows)
@@ -169,6 +191,6 @@ text += "© James Gaboardi, 2015"
 
 #   5. CREATE & WRITE .lp FILE TO DISK
 # Fill path name  --  File name must not have spaces.
-outfile = open('/path/name.lp', 'w')
+outfile = open('/Users/jgaboardi/Desktop/mclp.lp', 'w')
 outfile.write(text)
 outfile.close()

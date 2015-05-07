@@ -79,7 +79,17 @@ def Served_Nodes(rows):
         outtext1 += temp[:-2] + '>= 1\n'
     return outtext1
 
-#    Binaries
+# Declaration of Bounds
+def get_bounds_allocation(Cij):
+    outtext = ''
+    for i in range(rows):
+        temp = ''
+        for j in range(cols):
+            temp += ' 0 <= x' + str(i+1) + '_' + str(j+1) + ' <= 1\n'
+        outtext += temp    
+    return outtext
+    
+# Declaration of Binaries
 def set_cover_binaries(cols):
     outtext = ''
     for i in range(1, rows + 1):
@@ -119,6 +129,10 @@ text += '\n\n'
 text += 'Subject To\n'
 text += Served_Nodes(rows)
 text += '\n'
+# Declaration of Bounds
+text += 'Bounds\n'
+text += get_bounds_allocation(Cij)
+text += '\n'
 # Declaration of Decision Variables form: Binaries
 text += 'Binaries\n'
 text += set_cover_binaries(rows)
@@ -130,6 +144,6 @@ text += "© James Gaboardi, 2015"
 
 #   5. CREATE & WRITE .lp FILE TO DISK
 # Fill path name  --  File name must not have spaces.
-outfile = open('/path/name.lp', 'w')
+outfile = open('/Users/jgaboardi/Desktop/sctest.lp', 'w')
 outfile.write(text)
 outfile.close()
