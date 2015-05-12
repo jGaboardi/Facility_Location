@@ -143,7 +143,7 @@ Sij = Ai * Cij
 # Cost Coefficients for Allocation Decision Variables
 Sij = np.fromfile('path/Sij.txt', dtype=int, sep='\n')
 # Sij matrix dimensions
-Sij = Sij.reshape(3,4)
+Sij = Sij.reshape(4,4)
 rows, cols = Sij.shape
 
 
