@@ -10,7 +10,7 @@ GNU LESSER GENERAL PUBLIC LICENSE
  of this license document, but changing it is not allowed.
 '''
 # Developed by:  James D. Gaboardi, MSGIS
-#                03/2015
+#                05/2015
 #                © James Gaboardi
 
 #   Terminology & General Background for Facility Location and Summation Notation:
