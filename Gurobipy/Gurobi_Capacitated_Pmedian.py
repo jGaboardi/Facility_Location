@@ -6,9 +6,13 @@ GNU LESSER GENERAL PUBLIC LICENSE
  of this license document, but changing it is not allowed.
 '''
 
-# Building and Optimizing a Capacitated p-median facility location problem in Python/Gurobi[gurobipy]
-# Change dimiensions of Cij and the Facility Constraint for varying spatial extents
-# The dimension of the problem are SERVICExCLIENT unlike equation formulation
+# Building and Optimizing a Capacitated p-median facility location problem in
+#        Python/Gurobi[gurobipy]
+# Change dimensions of Dij and the Facility Constraint for varying
+#        spatial extents
+# The dimension of the problem are SERVICExCLIENT (rowXcolumn)
+#        unlike equation formulation CLIENTxSERVICE (rowXcolumn)
+
 
 import numpy as np
 import gurobipy as gbp
