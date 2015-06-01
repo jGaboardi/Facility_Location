@@ -29,9 +29,9 @@ GNU LESSER GENERAL PUBLIC LICENSE
 #   *   [j] - a specifc destination
 #   *   [n] - the set of origins
 #   *   [m] - the set of destinations
+#   *   [qi] - weight at each node (usually population)
 #   *   [Cij] - travel costs between nodes
-#   *   [qi] - demand at each node
-#   *   [Q] - capacity at each service node
+#   *   [Qy] - capacity at each service node
 #   *   [Z] - the sum of the weighted travel costs between all origins and destinations multiplied by the decision variables 
 #   *   [x#_#] - the decision variable in # row, # column position in the matrix
 #   *	[y#] - service facility in the # row
@@ -47,12 +47,12 @@ import numpy as np
 # Objective Function 
 # The objective of this function is to minimize the average travel cost along the network.
 # *** Minimize(Z)
-def get_objective_function_p_median(Sij):
+def get_objective_function_p_median(Cij):
     outtext = ' obj: '
     for i in range(rows):
         temp = ''
         for j in range(cols):
-            temp += str(Cij[i,j]) + 'x' + str(j+1) + '_' + str(j+1) + ' + '
+            temp += str(Cij[i,j]) + 'x' + str(i+1) + '_' + str(j+1) + ' + '
         outtext += temp + ' \n'
     outtext = outtext[:-4] + ' \n'
     return outtext
@@ -84,19 +84,29 @@ def get_p_facilities(rows):
     return outtext
 
 # Capacity Constraint
-def get_p_median_service_capacity(Sij):
+def get_p_median_service_capacity(Cij):
     counter = 5
     outtext = ''
     for j in range(len(Qi)):
         counter = counter + 1
         temp = ' c' + str(counter) + ':  -' + str(Qi[j]) + 'y' + str(j+1)
         for i in range(rows):
-            temp += ' + ' + str(Ai[i,0]) + 'x' + str(j+1) + '_' + str(j+1)
+            temp += ' + ' + str(Ai[i,0]) + 'x' + str(i+1) + '_' + str(j+1)
         outtext += temp + ' <= 0\n'
     return outtext
 
+# Opening Constraints
+def get_opening_constraints_p_median(Cij):
+    counter = 9
+    outtext = ''
+    for i in range(1, rows+1):
+        for j in range(1, cols+1):
+            counter = counter + 1 
+            outtext += ' c' + str(counter) + ':  - x' + str(j) + '_' + str(i) + ' + ' + 'y' + str(i) +  ' >= 0\n'
+    return outtext
+
 # Declaration of Bounds
-def get_bounds_allocation(Sij):
+def get_bounds_allocation(Cij):
     outtext = ''
     for i in range(rows):
         temp = ''
@@ -105,7 +115,7 @@ def get_bounds_allocation(Sij):
         outtext += temp    
     return outtext
 
-def get_bounds_facility(Sij):
+def get_bounds_facility(Cij):
     outtext = ''
     for i in range(rows):
         outtext += ' 0 <= y' + str(i+1) + ' <= 1\n'
@@ -113,7 +123,7 @@ def get_bounds_facility(Sij):
 
 # Declaration of Decision Variables (form can be: Binary, Integer, etc.)
 # In this case decision variables are binary.
-def get_allocation_decision_variables_p_median(Sij):
+def get_allocation_decision_variables_p_median(Cij):
     outtext = ''
     for i in range(1, rows+1):
         temp = ''
@@ -130,30 +140,6 @@ def get_facility_decision_variables_p_median(rows):
  
     
 #    3. DATA READS & VARIABLE DECLARATION
-'''
-########## Weights Matrix
-########## Sij -->  [0,     13000,  8000, 15000,
-##########           15600,     0, 14400, 13200,
-##########           8800,  13200,     0, 11000,
-##########           18750, 13750, 12500,     0]
-########## Read Sij in as a vector text file.
-
-Ai = np.fromfile('path/Ai.txt', dtype=int, sep='\n')
-Ai = Ai.reshape(#, #)
-Cij = np.fromfile('path/Cij.txt', dtype=float, sep='\n')
-Cij = Cij.reshape(#, #)
-Sij = Ai * Cij
-
-# Cost Coefficients for Allocation Decision Variables
-Sij = np.array([0, 13000, 8000, 15000, 15600, 0, 14400, 13200, 8800, 13200, 0, 11000, 18750, 13750, 12500, 0])
-# Sij matrix dimensions
-Sij = Sij.reshape(4,4)
-
-Sij = np.fromfile('path/Sij.txt', dtype=int, sep='\n')
-Sij = Sij.reshape(4,4)
-'''
-
-
 #rows, cols = Sij.shape
 Cij = np.array ([0, 13, 8, 15, 13, 0, 12, 11, 8, 12, 0, 10, 15, 11, 10, 0])
 Cij = Cij.reshape(4, 4)
@@ -168,19 +154,20 @@ rows, cols = Cij.shape
 text = "p-Median Facility Location Problem\n"
 text += "'''\n"
 text += 'Minimize\n'          
-text += get_objective_function_p_median(Sij)
+text += get_objective_function_p_median(Cij)
 # Declaration of Constraints
 text += 'Subject To\n'                    
 text += get_assignment_constraints(rows)
 text += get_p_facilities(rows)
-text += get_p_median_service_capacity(Sij)
+text += get_p_median_service_capacity(Cij)
+text += get_opening_constraints_p_median(Cij)
 # Declaration of Bounds
 text += 'Bounds\n' 
-text += get_bounds_allocation(Sij)
-text += get_bounds_facility(Sij)
+text += get_bounds_allocation(Cij)
+text += get_bounds_facility(Cij)
 # Declaration of Decision Variables form: Binaries
 text += 'Binaries\n'
-text += get_allocation_decision_variables_p_median(Sij)
+text += get_allocation_decision_variables_p_median(Cij)
 text += get_facility_decision_variables_p_median(rows)
 text += '\n'
 text += 'End\n'
@@ -190,6 +177,6 @@ text += "© James Gaboardi, 2015"
 
 #   5. CREATE & WRITE .lp FILE TO DISK
 # Fill path name  --  File name must not have spaces.
-outfile = open('/Users/jgaboardi/Desktop/cap_med.lp', 'w')
+outfile = open('path.lp', 'w')
 outfile.write(text)
 outfile.close()
