@@ -29,10 +29,9 @@ GNU LESSER GENERAL PUBLIC LICENSE
 #   *   [j] - a specifc destination
 #   *   [n] - the set of origins
 #   *   [m] - the set of destinations
-#   *   [Ai] - weight at each node (usually population)
 #   *   [Cij] - travel costs between nodes
-#   *   [Sij] - weighted travel costs [(Ai)(Cij)]
-#   *   [Qi] - capacity at each service node
+#   *   [qi] - demand at each node
+#   *   [Q] - capacity at each service node
 #   *   [Z] - the sum of the weighted travel costs between all origins and destinations multiplied by the decision variables 
 #   *   [x#_#] - the decision variable in # row, # column position in the matrix
 #   *	[y#] - service facility in the # row
@@ -53,7 +52,7 @@ def get_objective_function_p_median(Sij):
     for i in range(rows):
         temp = ''
         for j in range(cols):
-            temp += str(Sij[i,j]) + 'x' + str(i+1) + '_' + str(j+1) + ' + '
+            temp += str(Cij[i,j]) + 'x' + str(j+1) + '_' + str(j+1) + ' + '
         outtext += temp + ' \n'
     outtext = outtext[:-4] + ' \n'
     return outtext
@@ -92,7 +91,7 @@ def get_p_median_service_capacity(Sij):
         counter = counter + 1
         temp = ' c' + str(counter) + ':  -' + str(Qi[j]) + 'y' + str(j+1)
         for i in range(rows):
-            temp += ' + ' + str(Ai[i,0]) + 'x' + str(i+1) + '_' + str(j+1)
+            temp += ' + ' + str(Ai[i,0]) + 'x' + str(j+1) + '_' + str(j+1)
         outtext += temp + ' <= 0\n'
     return outtext
 
@@ -144,20 +143,25 @@ Ai = Ai.reshape(#, #)
 Cij = np.fromfile('path/Cij.txt', dtype=float, sep='\n')
 Cij = Cij.reshape(#, #)
 Sij = Ai * Cij
-'''
+
 # Cost Coefficients for Allocation Decision Variables
 Sij = np.array([0, 13000, 8000, 15000, 15600, 0, 14400, 13200, 8800, 13200, 0, 11000, 18750, 13750, 12500, 0])
 # Sij matrix dimensions
 Sij = Sij.reshape(4,4)
-'''
+
 Sij = np.fromfile('path/Sij.txt', dtype=int, sep='\n')
 Sij = Sij.reshape(4,4)
 '''
-rows, cols = Sij.shape
+
+
+#rows, cols = Sij.shape
+Cij = np.array ([0, 13, 8, 15, 13, 0, 12, 11, 8, 12, 0, 10, 15, 11, 10, 0])
+Cij = Cij.reshape(4, 4)
+
 Ai = np.array([1000, 1200, 1400, 1350])
 Ai = Ai.reshape(4,1)
 Qi = [0, 6000, 0, 0]
-
+rows, cols = Cij.shape
 
 #    4. START TEXT FOR .lp FILE
 # Declaration of Objective Function
@@ -186,6 +190,6 @@ text += "© James Gaboardi, 2015"
 
 #   5. CREATE & WRITE .lp FILE TO DISK
 # Fill path name  --  File name must not have spaces.
-outfile = open('/path/name.lp', 'w')
+outfile = open('/Users/jgaboardi/Desktop/cap_med.lp', 'w')
 outfile.write(text)
 outfile.close()
