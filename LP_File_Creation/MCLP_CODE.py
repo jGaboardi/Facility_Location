@@ -100,10 +100,7 @@ def get_p_facilities(rows):
 def get_bounds_allocation(Cij):
     outtext = ''
     for i in range(rows):
-        temp = ''
-        for j in range(cols):
-            temp += ' 0 <= x' + str(i+1) + '_' + str(j+1) + ' <= 1\n'
-        outtext += temp    
+        outtext += ' 0 <= x' + str(i+1) + ' <= 1\n'  
     return outtext
 
 def get_bounds_facility(Cij):
@@ -151,7 +148,7 @@ Hi = np.fromfile('path/Hi.txt', dtype=int, sep='\n')
 '''
 Hi = Hi.reshape(4,1)
 rows2, cols2 = Hi.shape
-Cij = np.array([ 0, 13, 8, 15, 3, 0, 12, 11, 8, 12, 0, 10, 15, 11, 10, 0])
+Cij = np.array([ 0, 13, 8, 15, 13, 0, 12, 11, 8, 12, 0, 10, 15, 11, 10, 0])
 '''
 Cij = np.fromfile('path/Cij.txt', dtype=int, sep='\n')
 '''
@@ -191,6 +188,6 @@ text += "© James Gaboardi, 2015"
 
 #   5. CREATE & WRITE .lp FILE TO DISK
 # Fill path name  --  File name must not have spaces.
-outfile = open('/path/name.lp', 'w')
+outfile = open('path.lp', 'w')
 outfile.write(text)
 outfile.close()
