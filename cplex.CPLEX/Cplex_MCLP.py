@@ -86,7 +86,6 @@ for i in Nodes:
 l = []
 for orig in Nodes:
     l.append([Aij[orig][dest] for dest in Nodes] + [-1])
-print l
 for orig in Nodes:       
     coverage_constraints = cp.SparsePair(ind = cli_var_cover[orig],                           
                                             val = l[orig])
@@ -113,6 +112,11 @@ print 'Total cost = ' , solution.get_objective_value()
 print 'Determination Time = ', m.get_dettime(), 'ticks'
 print 'Real Time to Optimize (sec.): *', time.time()-t1
 print '**************'
-print "NOTE:  Selected Variables Are Not Displayed"   
+for f in fac_var:
+    if (solution.get_values(f) >
+        m.parameters.mip.tolerances.integrality.get()):
+        print '    Facility %s is open' % f
+        else:
+        print '    Facility %s is closed' % f
 print '\n-----\nJames Gaboardi, 2015'
-m.write('/Users/jgaboardi/Desktop/CPLEX.lp')
+m.write('path.lp')

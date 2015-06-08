@@ -145,10 +145,8 @@ for i in Nodes:
 l4 = []
 for orig in Nodes:
     l4.append([qi_cap[orig][dest] for dest in Nodes] + [Qi[orig]])
-print l4
 for orig in Nodes:
     max_constraints = cp.SparsePair(ind = cli_var_cap[orig], val = l4[orig])
-    print 'got here'
     m.linear_constraints.add(lin_expr = [max_constraints],                 
                                 senses = ['L'], 
                                 rhs = [0]);
@@ -163,7 +161,13 @@ print solution.status[solution.get_status()]
 print 'Total cost = ' , solution.get_objective_value()
 print 'Determination Time = ', m.get_dettime(), 'ticks'
 print 'Real Time          = ', time.time()-t1, 'sec.'
-print '**************'
-print "NOTE:  Selected Variables Are Not Displayed"      
+print '****************************'
+for f in fac_var:
+    if (solution.get_values(f) >
+        m.parameters.mip.tolerances.integrality.get()):
+        print '    Facility %s is open' % f
+    else:
+        print '    Facility %s is closed' % f      
+print '****************************'
 print '\n-----\nJames Gaboardi, 2015'
 m.write('path.lp')

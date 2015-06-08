@@ -36,7 +36,7 @@ for i in Nodes:
         cli_var.append(temp)
 client_var = np.array(cli_var)
 client_var = client_var.reshape(4,4)
-print 'Client Variables\n' + str(cli_var)
+#print 'Client Variables\n' + str(cli_var)
 y = 'y'
 fac_var = []
 for i in Nodes:
@@ -44,7 +44,7 @@ for i in Nodes:
     fac_var.append(temp)
 facility_var = np.array(fac_var)
 facility_var = facility_var.reshape(4,1)
-print 'Facility Variables\n' + str(fac_var)
+#print 'Facility Variables\n' + str(fac_var)
 
 #     2. Create Model and Add Variables
 # Create Model
@@ -127,10 +127,8 @@ for i in Nodes:
 l3 = []
 for orig in Nodes:
     l3.append([qi_cap[orig][dest] for dest in Nodes] + [Qi[orig]])
-print l3
 for orig in Nodes:
     max_constraints = cp.SparsePair(ind = cli_var_cap[orig], val = l3[orig])
-    print 'got here'
     m.linear_constraints.add(lin_expr = [max_constraints],                 
                                 senses = ['L'], 
                                 rhs = [0]);
@@ -146,13 +144,13 @@ print solution.status[solution.get_status()]
 print 'Total cost = ' , solution.get_objective_value()
 print 'Determination Time = ', m.get_dettime(), 'ticks'
 print 'Real Time to Optimize (sec.): *', time.time()-t1
-print '**************'
-print "NOTE:  Facility # = Variable y#+1"
-print "i.e.  Facility 236 = y237"
-print '**************'
-for f in Nodes:
+print '****************************'
+for f in fac_var:
     if (solution.get_values(f) >
         m.parameters.mip.tolerances.integrality.get()):
-        print "Facility %d is open." % f       
+        print '    Facility %s is open' % f
+    else:
+        print '    Facility %s is closed' % f
+print '****************************'
 print '\n-----\nJames Gaboardi, 2015'
 m.write('path.lp')

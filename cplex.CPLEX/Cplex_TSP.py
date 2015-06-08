@@ -5,9 +5,10 @@ GNU LESSER GENERAL PUBLIC LICENSE
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
 '''
-
-# Building and Optimizing a Set Cover Location Problem problem in 
+# Building and Optimizing The Transportation Problem in
 #        Python/cplex.CPLEX
+# Change dimensions of Cij and the Facility Constraint for varying
+#        spatial extents
 
 import numpy as np
 import cplex as cp
@@ -15,24 +16,14 @@ import time
 t1 = time.time()
 
 #     1. Read In Data
-# Cost Vector
-Cij = [0, 13, 8, 15, 13, 0, 12, 11, 8, 12, 0, 10, 15, 11, 10, 0]
-# Create Aij: Determine Aij (nodes within S)
-# S --> 1 = served; 0 = unserved
-S = 10
-Aij = []
-for i in Cij:
-    if i <= S:
-        outtext = 1
-    else:
-        outtext = 0
-    Aij.append(outtext)
-Cij = np.array(Cij)
-Cij = Cij.reshape(4,4)
+Cij = np.array([4,5,4,10,6,3,3,5,8])
+Cij = Cij.reshape(3,3)
 rows, cols = Cij.shape
-Aij = np.array(Aij)
-Aij = Aij.reshape(4,4)
-client_nodes = range(len(Cij[0]))
+Si = np.array([100,130,140])
+Si = Si.reshape(3,1)
+Dj = np.array([150,100,120])
+Dj = Dj.reshape(3,1)
+client_nodes = range(len(Cij))
 
 # Indices & Variable Names
 nodes = len(Cij)
@@ -43,20 +34,16 @@ x = 'x'
 cli_var = []
 for i in Nodes:
     for j in Nodes:
-        temp = x + str(j+1)
+        temp = x + str(i+1) + '_' + str(j+1)
         cli_var.append(temp)
 client_var = np.array(cli_var)
-client_var = client_var.reshape(4,4)
-results_var = []
-for i in Nodes:
-    temp = x + str(i+1)
-    results_var.append(temp)
+client_var = client_var.reshape(3,3)
 
 #     2. Create Model and Add Variables
 # Create Model
 m = cp.Cplex()
 # Problem Name
-m.set_problem_name('\n -- Set Cover Location Problem -- ')
+m.set_problem_name('\n -- The Transportation Problem -- ')
 print m.get_problem_name()
 # Problem Type  ==>  Linear Programming
 m.set_problem_type(m.problem_type.LP)
@@ -68,21 +55,28 @@ print '\nProblem Type\n    ' + str(m.problem_type[m.get_problem_type()])
 m.objective.set_sense(m.objective.sense.minimize)
 print 'Objective Sense\n    ' + str(m.objective.sense[m.objective.get_sense()])
 # Add Client Decision Variables
-m.variables.add(names = [cli_var[i] for i in Nodes],  
-                        obj = [1] * nodes,
-                        lb = [0] * nodes, 
-                        ub = [1] * nodes, 
-                        types = ['B'] * nodes)
+m.variables.add(names = [cli_var[i] for i in ALL_nodes],  
+                        obj = [Cij[i][j] for i in Nodes for j in Nodes],
+                        types = ['C'] * all_nodes)
 
 #    3. Add Constraints 
-#Add Coverage Constraints
+#Add Supply Constraints
 for orig in Nodes:       
-    coverage_constraints = cp.SparsePair(ind = [client_var[orig][dest] 
+    supply_constraints = cp.SparsePair(ind = [client_var[dest][orig] 
                                             for dest in Nodes],                           
-                                            val = [Aij[orig][dest]for dest in Nodes])
-    m.linear_constraints.add(lin_expr = [coverage_constraints],                 
-                                senses = ['G'], 
-                                rhs = [1]);
+                                            val = [1] * nodes)
+    m.linear_constraints.add(lin_expr = [supply_constraints],                 
+                                senses = ['E'], 
+                                rhs = Si[orig]);
+
+#Add Demand Constraints
+for orig in Nodes:       
+    demand_constraints = cp.SparsePair(ind = [client_var[orig][dest] 
+                                            for dest in Nodes],                           
+                                            val = [1] * nodes)
+    m.linear_constraints.add(lin_expr = [demand_constraints],                 
+                                senses = ['E'], 
+                                rhs = Dj[orig]);
 
 #    4. Optimize and Print Results
 m.solve()
@@ -95,13 +89,11 @@ print solution.status[solution.get_status()]
 print 'Total cost = ' , solution.get_objective_value()
 print 'Determination Time = ', m.get_dettime(), 'ticks'
 print 'Real Time to Optimize (sec.): *', time.time()-t1
-print '****************************'
-for f in results_var:
+for f in cli_var:
     if (solution.get_values(f) >
         m.parameters.mip.tolerances.integrality.get()):
-        print '    Facility %s is open' % f
+        print '    Facility %s is open and ships' % f, solution.get_values(f), 'units'  
     else:
-        print '    Facility %s is closed' % f        
-print '****************************'
+        print '    Facility %s is closed' % f     
 print '\n-----\nJames Gaboardi, 2015'
 m.write('/path.lp')
