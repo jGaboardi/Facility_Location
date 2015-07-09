@@ -78,7 +78,7 @@ for orig in service_nodes:
 
 #     6. Optimize and Print Results
 mPDP.optimize()
-mPDP.write('/path.lp')
+mPDP.write('path.lp')
 print '\n**********************************************************************'
 selected = []
 for v in mPDP.getVars():
