@@ -18,15 +18,28 @@ import gurobipy as gbp
 import time
 t1 = time.time()
 
-#     1. Read In Data
+#           1. Read In (or Create) Data
+'''
 # Cost Matrix
 Dij = np.array ([0, 13, 8, 15, 13, 0, 12, 11, 8, 12, 0, 10, 15, 11, 10, 0])
 Dij = Dij.reshape(4, 4)
 qi = np.array([1000, 1200, 1400, 1350])
 Qi = [0, 6000, 0, 0]
-rows, cols = Dij.shape
+'''
+Dij = np.random.randint(100, 1000, 25)
+Dij = Dij.reshape(5,5)
+qi = np.random.randint(1, 100, 5)
+#qiSum = np.sum(qi)
+Qi = np.random.randint(200, 300, 5)
+
 client_nodes = range(len(Dij[0]))
 service_nodes = range(len(Dij))
+
+
+
+
+
+
 
 #     2. Create Model, Set MIP Focus, Add Variables, & Update Model
 m = gbp.Model(" -- Capacitated P-Center -- ")
@@ -98,4 +111,4 @@ print 'Candidate Facilities          *', len(selected)
 print('Rounded Objective (min):      * %g' % m.objVal)
 print "Real Time to Optimize (sec.): *", time.time()-t1
 print "\n-----\nJames Gaboardi, 2015"
-m.write("/Users/jgaboardi/Desktop/CapCcent.lp")
+m.write("path.lp")
