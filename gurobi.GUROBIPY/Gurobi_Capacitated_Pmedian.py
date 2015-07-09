@@ -19,13 +19,23 @@ import gurobipy as gbp
 import time
 t1 = time.time()
 
-#     1. Read In Data
+#           1. Read In (or Create) Data
+'''
 # Weights Vector
 Dij = np.array ([0, 13, 8, 15, 13, 0, 12, 11, 8, 12, 0, 10, 15, 11, 10, 0])
 Dij = Dij.reshape(4, 4)
 qi = np.array([1000, 1200, 1400, 1350])
 Qi = [0, 6000, 0, 0]
-rows, cols = Dij.shape
+'''
+
+Dij = np.random.randint(100, 1000, 25)
+Dij = Dij.reshape(5,5)
+qi = np.random.randint(1, 100, 5)
+#Ai = Ai.reshape(1,len(Ai))
+qiSum = np.sum(qi)
+Qi = np.random.randint(200, 300, 5)
+Dij = list(Dij)
+#rows, cols = Dij.shape
 client_nodes = range(len(Dij[0]))
 service_nodes = range(len(Dij))
 
@@ -68,7 +78,7 @@ for dest in service_nodes:
                         'Opening_Constraint_%d_%d' % (dest, orig))
 # Add Facility Constraint
 m.addConstr(gbp.quicksum(serv_var[dest][0] 
-                        for dest in service_nodes) == 1,
+                        for dest in service_nodes) == 2,
                         'Facility_Constraint')
 # Add Capacity Constraints
 for dest in service_nodes:
@@ -78,16 +88,24 @@ for dest in service_nodes:
 
 #       5. Optimize and Print Results
 m.optimize()
+t2 = time.time()-t1
+print '**********************************************************************'
 print 'Selected Facility Locations:'
 selected = []
 for v in m.getVars():
     if 'x' in v.VarName:
         pass
     elif v.x > 0:
-        selected.append(v.x)
-        print('            Variable %s = %g' % (v.varName, v.x))
-print 'Candidate Facilities          *', len(selected)
-print('Rounded Objective (min):      * %g' % m.objVal)
-print 'Real Time to Optimize (sec.): *', time.time()-t1
-print '\n-----\nJames Gaboardi, 2015'
+        var = '%s' % v.VarName
+        selected.append(var)
+        print '    |                                            ', var
+print '    | Selected Facility Locations --------------  ^^^^ '
+print '    | Candidate Facilities [p] ----------------- ', len(selected)
+val = m.objVal
+print '    | Objective Value -------------------------- ', val, '     '
+avg = float(m.objVal)/float(qiSum)
+print '    | Avg. Value / Client ---------------------- ', avg
+print '    | Real Time to Optimize (sec.) ------------- ', t2
+print '**********************************************************************'
+print '\nJames Gaboardi, 2015'
 m.write('path.lp')
