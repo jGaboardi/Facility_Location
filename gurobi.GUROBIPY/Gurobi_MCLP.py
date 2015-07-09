@@ -18,12 +18,21 @@ import gurobipy as gbp
 import time
 t1 = time.time()
 
-#     1. Read In Data
+#           1. Read In (or Create) Data
+'''
 # Cost Vector
 Cij = [0, 13, 8, 15, 13, 0, 12, 11, 8, 12, 0, 10, 15, 11, 10, 0]
+# Demand
+#Hi = np.array([1000, 1200, 1100, 1250])
+'''
+# Cost Vector
+Cij = list(np.random.randint(100, 1000, 25))
+# Demand
+Hi = np.random.randint(1, 100, 5)
+
 # Create Aij: Determine Aij (nodes within S)
 # S --> 1 = served; 0 = unserved
-S = 8
+S = 300
 Aij = []
 for i in Cij:
     if i <= S:
@@ -32,14 +41,11 @@ for i in Cij:
         outtext = 0
     Aij.append(outtext)
 Cij = np.array(Cij)
-Cij = Cij.reshape(4,4)
-rows, cols = Cij.shape
+Cij = Cij.reshape(5,5)
+#rows, cols = Cij.shape
 Aij = np.array(Aij)
-Aij = Aij.reshape(4,4)
-#Hi = np.array([1000, 1200, 1100, 1250])
-#Hi = Hi.reshape(4,1)
-#rows2, cols2 = Hi.shape
-Hi = [1000, 1200, 1100, 1250]
+Aij = Aij.reshape(5,5)
+
 client_nodes = range(len(Cij[0]))
 
 #     2. Create Model, Set MIP Focus, Add Variables, & Update Model
