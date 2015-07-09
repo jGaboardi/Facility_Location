@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 GNU LESSER GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
@@ -42,7 +43,6 @@ for i in Cij:
     Aij.append(outtext)
 Cij = np.array(Cij)
 Cij = Cij.reshape(5,5)
-#rows, cols = Cij.shape
 Aij = np.array(Aij)
 Aij = Aij.reshape(5,5)
 
@@ -79,7 +79,7 @@ for orig in client_nodes:
         m.addConstr(gbp.quicksum(Aij[orig][dest]*serv_var[dest] 
                                 for dest in client_nodes) - client_var[orig] >= 0,
                                 'Coverage_Constraint_%d' % orig)
-# Add Facility Constraint
+# Add Facility Constraint  --> [p ≤ 2]
 m.addConstr(gbp.quicksum(serv_var[dest] for dest in client_nodes) <= 2, 
                         "Facility_Constraint")
                         
