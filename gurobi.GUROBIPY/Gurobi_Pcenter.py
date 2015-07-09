@@ -18,12 +18,18 @@ import gurobipy as gbp
 import time
 t1 = time.time()
 
-#           1. Read In Data
+#           1. Read In (or Create) Data
+'''
 # Cost Matrix
 Cij = np.fromfile('path.txt', dtype=float, sep='\n')
 Cij = Cij.reshape('rows','cols')
 # Cost Coefficients for Decision Variables
 Cij = list(Cij)
+'''
+Cij = np.random.randint(100, 1000, 25)
+Cij = Cij.reshape(5,5)
+Cij = list(Cij)
+
 client_nodes = range(len(Cij[0]))
 service_nodes = range(len(Cij))
 
@@ -66,7 +72,7 @@ for dest in service_nodes:
         m.addConstr((serv_var[dest] - client_var[dest][orig] >= 0), 
                         'Opening_Constraint_%d_%d' % (dest, orig))
 # Add Facility Constraint
-m.addConstr(gbp.quicksum(serv_var[dest][0] for dest in service_nodes) == 36, 
+m.addConstr(gbp.quicksum(serv_var[dest][0] for dest in service_nodes) == 2, 
                         'Facility_Constraint')
 
 # Add Minimized Maximum Time Constraint

@@ -107,4 +107,4 @@ print '    | Avg. Value / Client ---------------------- ', avg
 print '    | Real Time to Optimize (sec.) ------------- ', t2
 print '**********************************************************************'
 print '\nJames Gaboardi, 2015'
-m.write('/Users/jgaboardi/Desktop/PMP.lp')
+m.write('/path.lp')
