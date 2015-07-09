@@ -19,23 +19,31 @@ import gurobipy as gbp
 import time
 t1 = time.time()
 
-#     1. Read In Data
+#     1. Read In (or Create)Data
+'''
+# READS
 # Weights Vector
 Ai = np.fromfile('path.txt', dtype=int, sep='\n')
 Ai = Ai.reshape(1,len(Ai))
+AiSum = np.sum(Ai)
 # Cost Matrix
 Cij = np.fromfile('path.txt', dtype=float, sep='\n')
 Cij = Cij.reshape(71,750)
 # Cost Coefficients for Decision Variables
 Sij = Ai * Cij
 Sij = list(Sij)
+'''
+# CREATE
+Cij = np.random.randint(100, 1000, 25)
+Cij = Cij.reshape(5,5)
+Ai = np.random.randint(1, 100, 5)
+Ai = Ai.reshape(1,len(Ai))
+AiSum = np.sum(Ai)
+Sij = Ai * Cij
+Sij = list(Sij)
+
 client_nodes = range(len(Sij[0]))
 service_nodes = range(len(Sij))
-
-
-
-
-
 
 #       2. Create Model, Set MIP Focus, Add Variables, & Update Model
 m = gbp.Model(' -- P-Median -- ')
@@ -75,22 +83,28 @@ for dest in service_nodes:
         m.addConstr((serv_var[dest] - client_var[dest][orig] >= 0), 
                         'Opening_Constraint_%d_%d' % (dest, orig))
 # Add Facility Constraint
-m.addConstr(gbp.quicksum(serv_var[dest][0] for dest in service_nodes) == 36,
+m.addConstr(gbp.quicksum(serv_var[dest][0] for dest in service_nodes) == 2,
                         'Facility_Constraint')
 
 #       5. Optimize and Print Results
 m.optimize()
+t2 = time.time()-t1
 print 'Selected Facility Locations:'
 selected = []
 for v in m.getVars():
     if 'x' in v.VarName:
         pass
     elif v.x > 0:
-        selected.append(v.x)
-        print('            Variable %s = %g' % (v.varName, v.x))
-print 'Candidate Facilities          *', len(selected)
-print('Rounded Objective (min):      * %g' % m.objVal)
-print 'Real Time to Optimize (sec.): *', time.time()-t1
-print '\n-----\nJames Gaboardi, 2015'
-
-m.write('path.lp')
+        var = '%s' % v.VarName
+        selected.append(var)
+        print '    |                                            ', var
+print '    | Selected Facility Locations --------------  ^^^^ '
+print '    | Candidate Facilities [p] ----------------- ', len(selected)
+val = m.objVal
+print '    | Objective Value -------------------------- ', val, '     '
+avg = float(m.objVal)/float(AiSum)
+print '    | Avg. Value / Client ---------------------- ', avg
+print '    | Real Time to Optimize (sec.) ------------- ', t2
+print '**********************************************************************'
+print '\nJames Gaboardi, 2015'
+m.write('/Users/jgaboardi/Desktop/PMP.lp')
