@@ -68,4 +68,4 @@ print 'Candidate Facilities          *', len(selected)
 print('Rounded Objective (min):      * %g' % m.objVal)
 print 'Real Time to Optimize (sec.): *', time.time()-t1
 print '\n-----\nJames Gaboardi, 2015'
-m.write('path.lp')
+m.write('/Users/jgaboardi/Desktop/TSP.lp')
