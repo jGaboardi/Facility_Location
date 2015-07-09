@@ -30,7 +30,7 @@ Cij = [0, 13, 8, 15, 13, 0, 12, 11, 8, 12, 0, 10, 15, 11, 10, 0]
 Cij = list(np.random.randint(100, 1000, 25))
 # Demand
 Hi = np.random.randint(1, 100, 5)
-
+HiSum = np.sum(Hi)
 # Create Aij: Determine Aij (nodes within S)
 # S --> 1 = served; 0 = unserved
 S = 300
@@ -85,14 +85,21 @@ m.addConstr(gbp.quicksum(serv_var[dest] for dest in client_nodes) <= 2,
                         
 #     6. Optimize and Print Results
 m.optimize()
-print "Selected Facility Locations:"
+t2 = time.time()-t1
+print '*****************************************************************************************'
 selected = []
 for v in m.getVars():
     if v.x > 0 and 'x' not in v.varName:
+        var = '%s' % v.VarName
         selected.append(v.x)
-        print('            Variable %s = %g' % (v.varName, v.x))
-print 'Candidate Facilities          *', len(selected)
-print('Rounded Objective (min):      * %g' % m.objVal)
-print "Real Time to Optimize (sec.): *", time.time()-t1
-print "\n-----\nJames Gaboardi, 2015"
+        print '    |                                                           ', var
+print '    | Selected Facility Locations ----------------------------  ^^^^ '
+print '    | Coverage (S) ------------------------------------------- ', S
+print '    | Candidate Facilities [p] ------------------------------- ', len(selected)
+val = int(m.objVal)
+print '    | Objective Value(clients covered in S/total clients) ---- ', val, '/', HiSum
+print '    | Percentage of clients served --------------------------- ', round(float(val)/float(HiSum)*100, 4), '%'
+print '    | Real Time to Optimize (sec.) --------------------------- ', t2
+print '*****************************************************************************************'
+print '\nJames Gaboardi, 2015'
 m.write("path.lp")
