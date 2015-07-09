@@ -22,7 +22,7 @@ t1 = time.time()
 '''
 # Cost Matrix
 Cij = np.fromfile('path.txt', dtype=float, sep='\n')
-Cij = Cij.reshape('rows','cols')
+Cij = Cij.reshape(#,#)
 '''
 # Cost Matrix
 Cij = np.random.randint(100, 1000, 25)
