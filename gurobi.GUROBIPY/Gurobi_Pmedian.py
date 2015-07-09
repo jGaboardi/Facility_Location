@@ -25,22 +25,25 @@ t1 = time.time()
 # Weights Vector
 Ai = np.fromfile('path.txt', dtype=int, sep='\n')
 Ai = Ai.reshape(1,len(Ai))
+# Demand Sum
 AiSum = np.sum(Ai)
 # Cost Matrix
 Cij = np.fromfile('path.txt', dtype=float, sep='\n')
 Cij = Cij.reshape(71,750)
-# Cost Coefficients for Decision Variables
+# Weighted Cost Coefficients for Decision Variables
 Sij = Ai * Cij
-Sij = list(Sij)
 '''
 # CREATE
+# Cost Matrix
 Cij = np.random.randint(100, 1000, 25)
 Cij = Cij.reshape(5,5)
+# Weights Matrix
 Ai = np.random.randint(1, 100, 5)
 Ai = Ai.reshape(1,len(Ai))
+# Demand Sum
 AiSum = np.sum(Ai)
+# Weighted Cost Coefficients for Decision Variables
 Sij = Ai * Cij
-Sij = list(Sij)
 
 client_nodes = range(len(Sij[0]))
 service_nodes = range(len(Sij))
@@ -107,4 +110,4 @@ print '    | Avg. Value / Client ---------------------- ', avg
 print '    | Real Time to Optimize (sec.) ------------- ', t2
 print '**********************************************************************'
 print '\nJames Gaboardi, 2015'
-m.write('/path.lp')
+m.write('path.lp')
