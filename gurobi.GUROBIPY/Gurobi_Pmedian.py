@@ -104,7 +104,7 @@ for v in m.getVars():
 print '    | Selected Facility Locations --------------  ^^^^ '
 print '    | Candidate Facilities [p] ----------------- ', len(selected)
 val = m.objVal
-print '    | Objective Value -------------------------- ', val, '     '
+print '    | Objective Value -------------------------- ', val
 avg = float(m.objVal)/float(AiSum)
 print '    | Avg. Value / Client ---------------------- ', avg
 print '    | Real Time to Optimize (sec.) ------------- ', t2
