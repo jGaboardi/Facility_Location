@@ -32,6 +32,11 @@ Sij = list(Sij)
 client_nodes = range(len(Sij[0]))
 service_nodes = range(len(Sij))
 
+
+
+
+
+
 #       2. Create Model, Set MIP Focus, Add Variables, & Update Model
 m = gbp.Model(' -- P-Median -- ')
 # Set MIP Focus to 2 for optimality

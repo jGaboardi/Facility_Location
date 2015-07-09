@@ -29,7 +29,6 @@ GNU LESSER GENERAL PUBLIC LICENSE
 
 #    1. Imports and Data Creation
 # Imports
-import pysal as ps
 import numpy as np
 import gurobipy as gbp
 # Distance Matrix --> 20x20
