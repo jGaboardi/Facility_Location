@@ -77,11 +77,11 @@ for v in m.getVars():
     if v.x > 0:
         var = '%s' % v.VarName
         selected.append(v.x)
-        print '    |                                                                   ', var,  '         '
-print '    | Selected Facility Locations -------------------------------------  ^^^^ ',  '         '
+        print '    |                                                                   ', var
+print '    | Selected Facility Locations -------------------------------------  ^^^^ '
 print '    | Coverage (S) ---------------------------------------------------- ', S
 print '    | Client Nodes ---------------------------------------------------- ', len(client_nodes)
-print '    | Candidate Facilities needed for 100% coverage of client nodes --- ', len(selected), '           '
+print '    | Candidate Facilities needed for 100% coverage of client nodes --- ', len(selected)
 print '    | Real Time to Optimize (sec.) ------------------------------------ ', t2
 print '*****************************************************************************************'
 print '\nJames Gaboardi, 2015'
