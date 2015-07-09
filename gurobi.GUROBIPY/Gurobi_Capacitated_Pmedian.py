@@ -31,11 +31,8 @@ Qi = [0, 6000, 0, 0]
 Dij = np.random.randint(100, 1000, 25)
 Dij = Dij.reshape(5,5)
 qi = np.random.randint(1, 100, 5)
-#Ai = Ai.reshape(1,len(Ai))
 qiSum = np.sum(qi)
 Qi = np.random.randint(200, 300, 5)
-Dij = list(Dij)
-#rows, cols = Dij.shape
 client_nodes = range(len(Dij[0]))
 service_nodes = range(len(Dij))
 
