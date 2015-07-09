@@ -111,7 +111,7 @@ for v in m.getVars():
 print '    | Selected Facility Locations --------------  ^^^^ '
 print '    | Candidate Facilities [p] ----------------- ', len(selected)
 val = m.objVal
-print '    | Objective Value -------------------------- ', val, '     '
+print '    | Objective Value -------------------------- ', val
 print '    | Real Time to Optimize (sec.) ------------- ', t2
 print '**********************************************************************'
 print '\nJames Gaboardi, 2015'
