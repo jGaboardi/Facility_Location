@@ -89,6 +89,7 @@ m.addConstr(gbp.quicksum(serv_var[dest][0] for dest in service_nodes) == 2,
 #       5. Optimize and Print Results
 m.optimize()
 t2 = time.time()-t1
+print '**********************************************************************'
 print 'Selected Facility Locations:'
 selected = []
 for v in m.getVars():
