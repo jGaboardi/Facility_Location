@@ -29,7 +29,7 @@ Ai = Ai.reshape(1,len(Ai))
 AiSum = np.sum(Ai)
 # Cost Matrix
 Cij = np.fromfile('path.txt', dtype=float, sep='\n')
-Cij = Cij.reshape(71,750)
+Cij = Cij.reshape(#,#)
 # Weighted Cost Coefficients for Decision Variables
 Sij = Ai * Cij
 '''
@@ -85,7 +85,7 @@ for dest in service_nodes:
     for orig in client_nodes:
         m.addConstr((serv_var[dest] - client_var[dest][orig] >= 0), 
                         'Opening_Constraint_%d_%d' % (dest, orig))
-# Add Facility Constraint
+# Add Facility Constraint  -->  [p=2]
 m.addConstr(gbp.quicksum(serv_var[dest][0] for dest in service_nodes) == 2,
                         'Facility_Constraint')
 

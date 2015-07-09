@@ -81,7 +81,7 @@ for dest in service_nodes:
     for orig in client_nodes:
         m.addConstr((serv_var[dest] - client_var[dest][orig] >= 0), 
                         'Opening_Constraint_%d_%d' % (dest, orig))
-# Add Facility Constraint
+# Add Facility Constraint --> [p=2]
 m.addConstr(gbp.quicksum(serv_var[dest][0] 
                         for dest in service_nodes) == 2,
                         'Facility_Constraint')
