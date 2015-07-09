@@ -29,16 +29,10 @@ Qi = [0, 6000, 0, 0]
 Dij = np.random.randint(100, 1000, 25)
 Dij = Dij.reshape(5,5)
 qi = np.random.randint(1, 100, 5)
-#qiSum = np.sum(qi)
 Qi = np.random.randint(200, 300, 5)
 
 client_nodes = range(len(Dij[0]))
 service_nodes = range(len(Dij))
-
-
-
-
-
 
 
 #     2. Create Model, Set MIP Focus, Add Variables, & Update Model
@@ -80,8 +74,8 @@ for dest in service_nodes:
     for orig in client_nodes:
         m.addConstr((serv_var[dest] - client_var[dest][orig] >= 0), 
                         "Opening_Constraint_%d_%d" % (dest, orig))
-# Add Facility Constraint
-m.addConstr(gbp.quicksum(serv_var[dest][0] for dest in service_nodes) == 1, 
+# Add Facility Constraint  -->  [p=2]
+m.addConstr(gbp.quicksum(serv_var[dest][0] for dest in service_nodes) == 2, 
                         "Facility_Constraint")
 # Add Minimized Maximum Time Constraint
 for orig in client_nodes:
@@ -95,9 +89,10 @@ for dest in service_nodes:
                         Qi[dest]*serv_var[dest][0] <= 0,
                         'Capacity_Constraint_%d_%d' % (dest, orig))
 
-#     5. Optimize and Print Results
+#           5. Optimize and Print Results
 m.optimize()
-print "Selected Facility Locations:"
+t2 = time.time()-t1
+print '**********************************************************************'
 selected = []
 for v in m.getVars():
     if 'x' in v.VarName:
@@ -105,10 +100,14 @@ for v in m.getVars():
     elif 'W' in v.VarName:
         pass
     elif v.x > 0:
-        selected.append(v.x)
-        print('            Variable %s = %g' % (v.varName, v.x))
-print 'Candidate Facilities          *', len(selected)
-print('Rounded Objective (min):      * %g' % m.objVal)
-print "Real Time to Optimize (sec.): *", time.time()-t1
-print "\n-----\nJames Gaboardi, 2015"
-m.write("path.lp")
+        var = '%s' % v.VarName
+        selected.append(var)
+        print '    |                                            ', var
+print '    | Selected Facility Locations --------------  ^^^^ '
+print '    | Candidate Facilities [p] ----------------- ', len(selected)
+val = m.objVal
+print '    | Objective Value -------------------------- ', val, '     '
+print '    | Real Time to Optimize (sec.) ------------- ', t2
+print '**********************************************************************'
+print '\nJames Gaboardi, 2015'
+m.write('path.lp')
