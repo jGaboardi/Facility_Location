@@ -23,12 +23,10 @@ t1 = time.time()
 # Cost Matrix
 Cij = np.fromfile('path.txt', dtype=float, sep='\n')
 Cij = Cij.reshape('rows','cols')
-# Cost Coefficients for Decision Variables
-Cij = list(Cij)
 '''
+# Cost Matrix
 Cij = np.random.randint(100, 1000, 25)
 Cij = Cij.reshape(5,5)
-Cij = list(Cij)
 
 client_nodes = range(len(Cij[0]))
 service_nodes = range(len(Cij))
