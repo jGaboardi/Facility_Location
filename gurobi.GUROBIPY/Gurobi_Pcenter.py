@@ -85,7 +85,6 @@ for orig in client_nodes:
 m.optimize()
 t2 = time.time()-t1
 print '**********************************************************************'
-print 'Selected Facility Locations:'
 selected = []
 for v in m.getVars():
     if 'x' in v.VarName:
