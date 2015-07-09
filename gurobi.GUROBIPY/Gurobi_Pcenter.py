@@ -83,6 +83,8 @@ for orig in client_nodes:
 
 #           5. Optimize and Print Results
 m.optimize()
+t2 = time.time()-t1
+print '**********************************************************************'
 print 'Selected Facility Locations:'
 selected = []
 for v in m.getVars():
@@ -91,11 +93,14 @@ for v in m.getVars():
     elif 'W' in v.VarName:
         pass
     elif v.x > 0:
-        selected.append(v.x)
-        print('            Variable %s = %g' % (v.varName, v.x))
-print 'Candidate Facilities          *', len(selected)
-print('Rounded Objective (min):      * %g' % m.objVal)
-print 'Real Time to Optimize (sec.):*', time.time()-t1
-print '\n-----\nJames Gaboardi, 2015'
-
+        var = '%s' % v.VarName
+        selected.append(var)
+        print '    |                                            ', var
+print '    | Selected Facility Locations --------------  ^^^^ '
+print '    | Candidate Facilities [p] ----------------- ', len(selected)
+val = m.objVal
+print '    | Objective Value -------------------------- ', val, '     '
+print '    | Real Time to Optimize (sec.) ------------- ', t2
+print '**********************************************************************'
+print '\nJames Gaboardi, 2015'
 m.write('path.lp')
