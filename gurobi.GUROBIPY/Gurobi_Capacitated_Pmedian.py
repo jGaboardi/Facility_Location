@@ -24,14 +24,19 @@ t1 = time.time()
 # Weights Vector
 Dij = np.array ([0, 13, 8, 15, 13, 0, 12, 11, 8, 12, 0, 10, 15, 11, 10, 0])
 Dij = Dij.reshape(4, 4)
+# Demand
 qi = np.array([1000, 1200, 1400, 1350])
+qiSum = np.sum(qi)
+# Capacity
 Qi = [0, 6000, 0, 0]
 '''
-
+# Weights Array
 Dij = np.random.randint(100, 1000, 25)
 Dij = Dij.reshape(5,5)
+# Demand
 qi = np.random.randint(1, 100, 5)
 qiSum = np.sum(qi)
+# Capacity
 Qi = np.random.randint(200, 300, 5)
 client_nodes = range(len(Dij[0]))
 service_nodes = range(len(Dij))
