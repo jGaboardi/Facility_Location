@@ -18,12 +18,17 @@ import gurobipy as gbp
 import time
 t1 = time.time()
 
-#     1. Read In Data
+#           1. Read In (or Create) Data
+'''
 # Cost Vector
 Cij = [0, 13, 8, 15, 13, 0, 12, 11, 8, 12, 0, 10, 15, 11, 10, 0]
+'''
+# Cost Vector
+Cij = list(np.random.randint(100, 1000, 25))
+
 # Create Aij: Determine Aij (nodes within S)
 # S --> 1 = served; 0 = unserved
-S = 10
+S = 500
 Aij = []
 for i in Cij:
     if i <= S:
@@ -32,10 +37,10 @@ for i in Cij:
         outtext = 0
     Aij.append(outtext)
 Cij = np.array(Cij)
-Cij = Cij.reshape(4,4)
+Cij = Cij.reshape(5,5)
 rows, cols = Cij.shape
 Aij = np.array(Aij)
-Aij = Aij.reshape(4,4)
+Aij = Aij.reshape(5,5)
 client_nodes = range(len(Cij[0]))
 
 #     2. Create Model, Set MIP Focus, Add Variables, & Update Model
@@ -65,14 +70,19 @@ for orig in client_nodes:
 
 #     6. Optimize and Print Results
 m.optimize()
-print "Selected Facility Locations:"
+t2 = time.time()-t1
+print '**********************************************************************'
 selected = []
 for v in m.getVars():
     if v.x > 0:
+        var = '%s' % v.VarName
         selected.append(v.x)
-        print('            Variable %s = %g' % (v.varName, v.x))
-print 'Candidate Facilities          *', len(selected)
-print('Rounded Objective (min):      * %g' % m.objVal)
-print "Real Time to Optimize (sec.): *", time.time()-t1
-print "\n-----\nJames Gaboardi, 2015"
+        print '    |                                                                   ', var,  '         '
+print '    | Selected Facility Locations -------------------------------------  ^^^^ ',  '         '
+print '    | Coverage (S) ---------------------------------------------------- ', S
+print '    | Client Nodes ---------------------------------------------------- ', len(client_nodes)
+print '    | Candidate Facilities needed for 100% coverage of client nodes --- ', len(selected), '           '
+print '    | Real Time to Optimize (sec.) ------------------------------------ ', t2
+print '*****************************************************************************************'
+print '\nJames Gaboardi, 2015'
 m.write("path.lp")
