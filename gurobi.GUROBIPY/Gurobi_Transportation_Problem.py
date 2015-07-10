@@ -37,7 +37,7 @@ SiSum = np.sum(Si)
 # Demand
 Dj = np.sort(Si, axis=None)
 DjSum = np.sum(Dj)
-            client_nodes = range(len(Cij))
+client_nodes = range(len(Cij))
 
 #       2. Create Model, Set MIP Focus, Add Variables, & Update Model
 m = gbp.Model(' -- The Transportation Problem -- ')
