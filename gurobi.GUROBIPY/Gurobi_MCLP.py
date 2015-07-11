@@ -62,7 +62,6 @@ for orig in client_nodes:
 serv_var = []
 for dest in client_nodes:
     serv_var.append(m.addVar(vtype=gbp.GRB.BINARY,
-                                lb = 0,
                                 ub = 1,
                                 name='y'+str(dest+1)))
 # Update Model Variables
