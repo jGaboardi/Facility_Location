@@ -27,6 +27,22 @@ Sij =  [[    0, 13000,  8000, 15000],
          [15600,     0, 14400, 13200],
          [ 8800, 13200,     0, 11000],
          [18750, 13750, 12500,     0]]
+'''
+# CREATE
+# Cost Matrix
+Cij = np.random.randint(100, 1000, 25)
+Cij = Cij.reshape(5,5)
+# Weights Matrix
+Ai = np.random.randint(1, 100, 5)
+Ai = Ai.reshape(1,len(Ai))
+# Demand Sum
+AiSum = np.sum(Ai)
+# Weighted Cost Coefficients for Decision Variables
+Sij = Ai * Cij
+'''
+
+
+
 # Indices & Variable Names
 nodes = len(Sij)
 Nodes = range(len(Sij))
@@ -39,8 +55,8 @@ for i in Nodes:
         temp = x + str(i+1) + '_' + str(j+1)
         cli_var.append(temp)
 client_var = np.array(cli_var)
-client_var = client_var.reshape(4,4)
-#print 'Client Variables\n' + str(cli_var)
+client_var = client_var.reshape(len(Sij),len(Sij[0]))
+
 y = 'y'
 fac_var = []
 for i in Nodes:
@@ -48,7 +64,7 @@ for i in Nodes:
     fac_var.append(temp)
 facility_var = np.array(fac_var)
 facility_var = facility_var.reshape(4,1)
-#print 'Facility Variables\n' + str(fac_var)
+
 
 #     2. Create Model and Add Variables
 # Create Model
@@ -83,7 +99,6 @@ for orig in Nodes:
     assignment_constraints = cp.SparsePair(ind = [client_var[orig][dest] 
                                             for dest in Nodes],                           
                                             val = [1] * nodes)
-    m.linear_constraints.add(names = [fac_var[dest] for dest in Nodes])
     m.linear_constraints.add(lin_expr = [assignment_constraints],                 
                                 senses = ['E'], 
                                 rhs = [1]);
@@ -133,4 +148,4 @@ for f in fac_var:
         print '    Facility %s is closed' % f           
 print '****************************'
 print '\n-----\nJames Gaboardi, 2015'
-m.write('path.lp')
+m.write('/Users/jgaboardi/Desktop/LPpath.lp')
