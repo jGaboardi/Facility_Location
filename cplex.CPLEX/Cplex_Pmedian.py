@@ -44,7 +44,6 @@ Sij = Ai * Cij
 client_nodes = range(len(Sij))
 service_nodes = range(len(Sij[0]))
 
-#Nodes = range(len(Sij))
 all_nodes = len(Sij) * len(Sij[0])
 ALL_nodes = range(all_nodes)
 
