@@ -23,35 +23,35 @@ t1 = time.time()
 #Cij = Cij.reshape(4,4)
 # Cost Coefficients for Decision Variables
 #Sij = Ai * Cij
-Sij =  [[    0, 13000,  8000, 15000],
-         [15600,     0, 14400, 13200],
-         [ 8800, 13200,     0, 11000],
-         [18750, 13750, 12500,     0]]
-'''
+#Sij =  [[    0, 13000,  8000, 15000],
+#         [15600,     0, 14400, 13200],
+#         [ 8800, 13200,     0, 11000],
+#         [18750, 13750, 12500,     0]]
+
 # CREATE
 # Cost Matrix
-Cij = np.random.randint(100, 1000, 25)
-Cij = Cij.reshape(5,5)
+Cij = np.random.randint(100, 1000, 50000)
+Cij = Cij.reshape(500,100)
 # Weights Matrix
-Ai = np.random.randint(1, 100, 5)
-Ai = Ai.reshape(1,len(Ai))
+Ai = np.random.randint(1, 100, 500)
+Ai = Ai.reshape(len(Ai), 1)
 # Demand Sum
 AiSum = np.sum(Ai)
 # Weighted Cost Coefficients for Decision Variables
 Sij = Ai * Cij
-'''
-
-
 
 # Indices & Variable Names
-nodes = len(Sij)
-Nodes = range(len(Sij))
-all_nodes = len(Sij) * len(Sij)
+client_nodes = range(len(Sij))
+service_nodes = range(len(Sij[0]))
+
+#Nodes = range(len(Sij))
+all_nodes = len(Sij) * len(Sij[0])
 ALL_nodes = range(all_nodes)
+
 x = 'x'
 cli_var = []
-for i in Nodes:
-    for j in Nodes:
+for i in client_nodes:
+    for j in service_nodes:
         temp = x + str(i+1) + '_' + str(j+1)
         cli_var.append(temp)
 client_var = np.array(cli_var)
@@ -59,11 +59,11 @@ client_var = client_var.reshape(len(Sij),len(Sij[0]))
 
 y = 'y'
 fac_var = []
-for i in Nodes:
+for i in service_nodes:
     temp = y + str(i+1)
     fac_var.append(temp)
 facility_var = np.array(fac_var)
-facility_var = facility_var.reshape(4,1)
+facility_var = facility_var.reshape(1,len(Sij[0]))
 
 
 #     2. Create Model and Add Variables
@@ -72,6 +72,7 @@ m = cp.Cplex()
 # Problem Name
 m.set_problem_name('\n -- P-Median -- ')
 print m.get_problem_name()
+
 # Problem Type  ==>  Linear Programming
 m.set_problem_type(m.problem_type.LP)
 # Set MIP Emphasis to '2' --> Optimal
@@ -83,41 +84,41 @@ m.objective.set_sense(m.objective.sense.minimize)
 print 'Objective Sense\n    ' + str(m.objective.sense[m.objective.get_sense()])
 # Add Client Decision Variables
 m.variables.add(names = [cli_var[i] for i in ALL_nodes],
-                        obj = [Sij[i][j] for i in Nodes for j in Nodes], 
+                        obj = [Sij[i][j] for i in client_nodes for j in service_nodes], 
                         lb = [0] * all_nodes, 
                         ub = [1] * all_nodes, 
                         types = ['B'] * all_nodes)
 # Add Service Decision Variable
-m.variables.add(names = [fac_var[i] for i in Nodes],
-                        lb = [0] * nodes, 
-                        ub = [1] * nodes, 
-                        types = ['B'] * nodes)
+m.variables.add(names = [fac_var[j] for j in service_nodes],
+                        lb = [0] * len(Sij[0]), 
+                        ub = [1] * len(Sij[0]), 
+                        types = ['B'] * len(Sij[0]))
 
 #    3. Add Constraints
 # Add Assignment Constraints
-for orig in Nodes:       
+for orig in client_nodes:       
     assignment_constraints = cp.SparsePair(ind = [client_var[orig][dest] 
-                                            for dest in Nodes],                           
-                                            val = [1] * nodes)
+                                            for dest in service_nodes],                           
+                                            val = [1] * len(Sij[0]))
     m.linear_constraints.add(lin_expr = [assignment_constraints],                 
                                 senses = ['E'], 
                                 rhs = [1]);
 # Add Facility Constraint
 facility_constraint = cp.SparsePair(ind = fac_var, 
-                                    val = [1.0]*nodes)
+                                    val = [1.0] * len(Sij[0]))
 m.linear_constraints.add(lin_expr = [facility_constraint],
                                 senses = ['E'],
                                 rhs = [1])
 # Add Opening Constraint
 cli_var_open = []
-for i in Nodes:
-    for j in Nodes:
-        temp = x + str(j+1) + '_' + str(i+1)
+for i in client_nodes:
+    for j in service_nodes:
+        temp = x + str(i+1) + '_' + str(j+1)
         cli_var_open.append(temp)
 fac_var_open = []
-for i in Nodes:
-    for j in Nodes:
-        temp = y + str(i+1)
+for i in client_nodes:
+    for j in service_nodes:
+        temp = y + str(j+1)
         fac_var_open.append(temp)
 l = []
 for i in ALL_nodes:
@@ -127,9 +128,10 @@ for i in l:
     m.linear_constraints.add(lin_expr = [opening_constraint], 
                                 senses = ['G'], 
                                 rhs = [0])
-
+                                
 #    4. Optimize and Print Results
 m.solve()
+m.write('/Users/jgaboardi/Desktop/LPpath.lp')
 solution = m.solution
 # solution.get_status() returns an integer code
 print 'Solution status = ' , solution.get_status(), ':',
@@ -148,4 +150,3 @@ for f in fac_var:
         print '    Facility %s is closed' % f           
 print '****************************'
 print '\n-----\nJames Gaboardi, 2015'
-m.write('/Users/jgaboardi/Desktop/LPpath.lp')
