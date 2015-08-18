@@ -27,21 +27,21 @@ t1 = time.time()
 #     1. Read In (or Create) Data
 # CREATE
 # Distance Matrix
-dij = np.random.randint(10, 20, 9)
-dij = dij.reshape(3,3)
+dij = np.random.randint(10, 20, 25)
+dij = dij.reshape(5,5)
 # Weights Matrix
-hi = np.random.randint(1, 50, 3)
-hi = hi.reshape(len(hi),1)
-# Cost per mile
-c = 1.25
+hi = np.random.randint(1, 50, 5)
+#hi = hi.reshape(len(hi),1)
 # Demand Sum
 hiSum = np.sum(hi)
+# Cost per mile
+c = 1.25
 # Capacity
-kj = np.random.randint(200, 300, 3)
-kj = kj.reshape((1,len(kj)))
+kj = np.random.randint(200, 300, 5)
+#kj = kj.reshape((1,len(kj)))
 kjSum = np.sum(kj)
 # Fixed Facility Cost
-Fj = np.random.randint(6, 100, 3)
+Fj = np.random.randint(6, 100, 5)
 Fj = Fj.reshape(1,len(Fj))
 FjSum = np.sum(Fj)
 # Weighted Cost Coefficients for Decision Variables
@@ -86,11 +86,20 @@ for orig in client_nodes:
 for dest in service_nodes:
     for orig in client_nodes:
         mCFLP.addConstr(serv_var[dest] - client_var[orig][dest] >= 0)
-
+# Add Capacity Constraint
+#for dest in service_nodes:
+#    mCFLP.addConstr(gbp.quicksum(hi[0][dest]*client_var[orig][dest] for orig in client_nodes) - kj[0][dest]*serv_var[0][dest] <= 0)
+    
 # Add Capacity Constraint
 for dest in service_nodes:
     mCFLP.addConstr(gbp.quicksum(hi[dest]*client_var[orig][dest] 
-                        for orig in client_nodes) - kj[dest]*serv_var[dest][0] <= 0)
+                                    for orig in client_nodes) - 
+                                    kj[dest]*serv_var[dest][0] <= 0)
+
+                                #qi[dest]*client_var[dest][orig] 
+                                        #for orig in client_nodes) - Qi[dest]*serv_var[dest][0] <= 0
+
+
 
 #       5. Optimize and Print Results
 mCFLP.optimize()
