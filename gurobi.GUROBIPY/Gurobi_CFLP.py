@@ -11,12 +11,12 @@ GNU LESSER GENERAL PUBLIC LICENSE
 '''
 Adapted from:
 
-Daskin, Mark
-    2008
-    What You Should Know About Location Modeling
-    Naval Research Logistics
-    55:2
-    283-294
+Daskin, M. S. 
+    1995 
+    Network and Discrete Location: Models, Algorithms, and Applications
+    Hoboken, NJ, USA
+    John Wiley & Sons, Inc.
+
 '''
 
 import numpy as np
