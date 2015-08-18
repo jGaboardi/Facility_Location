@@ -27,21 +27,21 @@ t1 = time.time()
 #     1. Read In (or Create) Data
 # CREATE
 # Distance Matrix
-dij = np.random.randint(10, 20, 25)
-dij = dij.reshape(5,5)
-# Weights Matrix
-hi = np.random.randint(1, 50, 5)
+dij = np.random.randint(10, 20, 2500)
+dij = dij.reshape(50,50)
+# Demand Matrix
+hi = np.random.randint(25, 50, 50)
 #hi = hi.reshape(len(hi),1)
 # Demand Sum
 hiSum = np.sum(hi)
 # Cost per mile
 c = 1.25
 # Capacity
-kj = np.random.randint(200, 300, 5)
+kj = np.random.randint(100, 150, 50)
 #kj = kj.reshape((1,len(kj)))
 kjSum = np.sum(kj)
 # Fixed Facility Cost
-Fj = np.random.randint(6, 100, 5)
+Fj = np.random.randint(75, 100, 50)
 Fj = Fj.reshape(1,len(Fj))
 FjSum = np.sum(Fj)
 # Weighted Cost Coefficients for Decision Variables
@@ -86,20 +86,12 @@ for orig in client_nodes:
 for dest in service_nodes:
     for orig in client_nodes:
         mCFLP.addConstr(serv_var[dest] - client_var[orig][dest] >= 0)
-# Add Capacity Constraint
-#for dest in service_nodes:
-#    mCFLP.addConstr(gbp.quicksum(hi[0][dest]*client_var[orig][dest] for orig in client_nodes) - kj[0][dest]*serv_var[0][dest] <= 0)
-    
+
 # Add Capacity Constraint
 for dest in service_nodes:
     mCFLP.addConstr(gbp.quicksum(hi[dest]*client_var[orig][dest] 
                                     for orig in client_nodes) - 
                                     kj[dest]*serv_var[dest][0] <= 0)
-
-                                #qi[dest]*client_var[dest][orig] 
-                                        #for orig in client_nodes) - Qi[dest]*serv_var[dest][0] <= 0
-
-
 
 #       5. Optimize and Print Results
 mCFLP.optimize()
@@ -119,6 +111,7 @@ print '    | Cost per miles [c] ----------------------- ', c
 val = mCFLP.objVal
 print '    | Objective Value (Total Facility Cost) ---- ', val
 print '    | Total Demand ----------------------------- ', hiSum
+print '    | Total Capacity --------------------------- ', kjSum
 print '    | Total Potential Fixed Cost --------------- ', FjSum
 avgh = float(mCFLP.objVal)/float(hiSum)
 print '    | Avg. Cost / Demand ----------------------- ', avgh
@@ -128,4 +121,4 @@ print '    | Real Time to Optimize (sec.) ------------- ', t2
 print '**********************************************************************'
 print 'Capacitated Fixed Charge Location Problem'
 print '\nJames Gaboardi, 2015'
-mCFLP.write('/Users/jgaboardi/Desktop/LP.lp')
+mCFLP.write('path.lp')
