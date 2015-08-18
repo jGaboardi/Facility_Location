@@ -27,17 +27,21 @@ t1 = time.time()
 #     1. Read In (or Create) Data
 # CREATE
 # Distance Matrix
-dij = np.random.randint(10, 20, 900)
-dij = dij.reshape(30,30)
+dij = np.random.randint(10, 20, 9)
+dij = dij.reshape(3,3)
 # Weights Matrix
-hi = np.random.randint(1, 50, 30)
+hi = np.random.randint(1, 50, 3)
 hi = hi.reshape(len(hi),1)
 # Cost per mile
 c = 1.25
 # Demand Sum
 hiSum = np.sum(hi)
+# Capacity
+kj = np.random.randint(200, 300, 3)
+kj = kj.reshape((1,len(kj)))
+kjSum = np.sum(kj)
 # Fixed Facility Cost
-Fj = np.random.randint(6, 100, 30)
+Fj = np.random.randint(6, 100, 3)
 Fj = Fj.reshape(1,len(Fj))
 FjSum = np.sum(Fj)
 # Weighted Cost Coefficients for Decision Variables
@@ -84,7 +88,9 @@ for dest in service_nodes:
         mCFLP.addConstr(serv_var[dest] - client_var[orig][dest] >= 0)
 
 # Add Capacity Constraint
-
+for dest in service_nodes:
+    mCFLP.addConstr(gbp.quicksum(hi[dest]*client_var[orig][dest] 
+                        for orig in client_nodes) - kj[dest]*serv_var[dest][0] <= 0)
 
 #       5. Optimize and Print Results
 mCFLP.optimize()
@@ -113,4 +119,4 @@ print '    | Real Time to Optimize (sec.) ------------- ', t2
 print '**********************************************************************'
 print 'Capacitated Fixed Charge Location Problem'
 print '\nJames Gaboardi, 2015'
-m.write('/Users/jgaboardi/Desktop/LP.lp')
+mCFLP.write('/Users/jgaboardi/Desktop/LP.lp')
