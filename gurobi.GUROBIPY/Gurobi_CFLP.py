@@ -47,7 +47,7 @@ client_nodes = range(len(Sij))
 service_nodes = range(len(Sij[0]))
 
 #       2. Create Model, Set MIP Focus, Add Variables, & Update Model
-mUFLP = gbp.Model(' -- UFLP -- ')
+m = gbp.Model(' -- UFLP -- ')
 # Set MIP Focus to 2 for optimality
 gbp.setParam('MIPFocus', 2)
 # Add Client Decision Variables
@@ -55,20 +55,20 @@ client_var = []
 for orig in client_nodes:
     client_var.append([])
     for dest in service_nodes:
-        client_var[orig].append(mUFLP.addVar(vtype=gbp.GRB.BINARY, 
+        client_var[orig].append(m.addVar(vtype=gbp.GRB.BINARY, 
                                             obj=dij[orig][dest],
                                             name='x'+str(orig+1)+'_'+str(dest+1)))
 # Add Service Decision Variables
 serv_var = []
 for dest in service_nodes:
     serv_var.append([])
-    serv_var[dest].append(mUFLP.addVar(vtype=gbp.GRB.BINARY, 
+    serv_var[dest].append(m.addVar(vtype=gbp.GRB.BINARY, 
                                     name='y'+str(dest+1)))
 # Update Model Variables
-mUFLP.update()       
+m.update()       
 
 #       3. Set Objective Function
-mUFLP.setObjective(gbp.quicksum((Fj[0][dest]*serv_var[dest][0] + 
+m.setObjective(gbp.quicksum((Fj[0][dest]*serv_var[dest][0] + 
                         c * Sij[orig][dest]*client_var[orig][dest] 
                         for orig in client_nodes for dest in service_nodes)), 
                         gbp.GRB.MINIMIZE)
@@ -76,20 +76,19 @@ mUFLP.setObjective(gbp.quicksum((Fj[0][dest]*serv_var[dest][0] +
 #       4. Add Constraints
 #Add Assignment Constraints
 for orig in client_nodes:
-    mUFLP.addConstr(gbp.quicksum(client_var[orig][dest] 
+    m.addConstr(gbp.quicksum(client_var[orig][dest] 
                         for dest in service_nodes) == 1)
 # Add Opening Constraints
 for dest in service_nodes:
     for orig in client_nodes:
-        mUFLP.addConstr(serv_var[dest] - client_var[orig][dest] >= 0)
+        m.addConstr(serv_var[dest] - client_var[orig][dest] >= 0)
 
 #       5. Optimize and Print Results
-mUFLP.optimize()
+m.optimize()
 t2 = time.time()-t1
-mUFLP.write('path.lp')
 print '**********************************************************************'
 selected = []
-for v in mUFLP.getVars():
+for v in m.getVars():
     if 'x' in v.VarName:
         pass
     elif v.x > 0:
@@ -99,15 +98,16 @@ for v in mUFLP.getVars():
 print '    | Selected Facility Locations --------------  ^^^^ '
 print '    | Candidate Facilities [p] ----------------- ', len(selected)
 print '    | Cost per miles [c] ----------------------- ', c
-val = mUFLP.objVal
+val = m.objVal
 print '    | Objective Value (Total Facility Cost) ---- ', val
 print '    | Total Demand ----------------------------- ', hiSum
 print '    | Total Potential Fixed Cost --------------- ', FjSum
-avgh = float(mUFLP.objVal)/float(hiSum)
+avgh = float(m.objVal)/float(hiSum)
 print '    | Avg. Cost / Demand ----------------------- ', avgh
-avgF = float(mUFLP.objVal)/len(selected)
+avgF = float(m.objVal)/len(selected)
 print '    | Avg. Cost / Facility --------------------- ', avgF
 print '    | Real Time to Optimize (sec.) ------------- ', t2
 print '**********************************************************************'
 print 'Uncapacitated Fixed Charge Location Problem'
 print '\nJames Gaboardi, 2015'
+m.write('path.lp')
