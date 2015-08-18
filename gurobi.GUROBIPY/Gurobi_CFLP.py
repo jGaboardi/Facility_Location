@@ -47,7 +47,7 @@ client_nodes = range(len(Sij))
 service_nodes = range(len(Sij[0]))
 
 #       2. Create Model, Set MIP Focus, Add Variables, & Update Model
-m = gbp.Model(' -- UFLP -- ')
+mCFLP = gbp.Model(' -- UFLP -- ')
 # Set MIP Focus to 2 for optimality
 gbp.setParam('MIPFocus', 2)
 # Add Client Decision Variables
@@ -55,20 +55,20 @@ client_var = []
 for orig in client_nodes:
     client_var.append([])
     for dest in service_nodes:
-        client_var[orig].append(m.addVar(vtype=gbp.GRB.BINARY, 
+        client_var[orig].append(mCFLP.addVar(vtype=gbp.GRB.BINARY, 
                                             obj=dij[orig][dest],
                                             name='x'+str(orig+1)+'_'+str(dest+1)))
 # Add Service Decision Variables
 serv_var = []
 for dest in service_nodes:
     serv_var.append([])
-    serv_var[dest].append(m.addVar(vtype=gbp.GRB.BINARY, 
+    serv_var[dest].append(mCFLP.addVar(vtype=gbp.GRB.BINARY, 
                                     name='y'+str(dest+1)))
 # Update Model Variables
-m.update()       
+mCFLP.update()       
 
 #       3. Set Objective Function
-m.setObjective(gbp.quicksum((Fj[0][dest]*serv_var[dest][0] + 
+mCFLP.setObjective(gbp.quicksum((Fj[0][dest]*serv_var[dest][0] + 
                         c * Sij[orig][dest]*client_var[orig][dest] 
                         for orig in client_nodes for dest in service_nodes)), 
                         gbp.GRB.MINIMIZE)
@@ -76,19 +76,22 @@ m.setObjective(gbp.quicksum((Fj[0][dest]*serv_var[dest][0] +
 #       4. Add Constraints
 #Add Assignment Constraints
 for orig in client_nodes:
-    m.addConstr(gbp.quicksum(client_var[orig][dest] 
+    mCFLP.addConstr(gbp.quicksum(client_var[orig][dest] 
                         for dest in service_nodes) == 1)
 # Add Opening Constraints
 for dest in service_nodes:
     for orig in client_nodes:
-        m.addConstr(serv_var[dest] - client_var[orig][dest] >= 0)
+        mCFLP.addConstr(serv_var[dest] - client_var[orig][dest] >= 0)
+
+# Add Capacity Constraint
+
 
 #       5. Optimize and Print Results
-m.optimize()
+mCFLP.optimize()
 t2 = time.time()-t1
 print '**********************************************************************'
 selected = []
-for v in m.getVars():
+for v in mCFLP.getVars():
     if 'x' in v.VarName:
         pass
     elif v.x > 0:
@@ -98,16 +101,16 @@ for v in m.getVars():
 print '    | Selected Facility Locations --------------  ^^^^ '
 print '    | Candidate Facilities [p] ----------------- ', len(selected)
 print '    | Cost per miles [c] ----------------------- ', c
-val = m.objVal
+val = mCFLP.objVal
 print '    | Objective Value (Total Facility Cost) ---- ', val
 print '    | Total Demand ----------------------------- ', hiSum
 print '    | Total Potential Fixed Cost --------------- ', FjSum
-avgh = float(m.objVal)/float(hiSum)
+avgh = float(mCFLP.objVal)/float(hiSum)
 print '    | Avg. Cost / Demand ----------------------- ', avgh
-avgF = float(m.objVal)/len(selected)
+avgF = float(mCFLP.objVal)/len(selected)
 print '    | Avg. Cost / Facility --------------------- ', avgF
 print '    | Real Time to Optimize (sec.) ------------- ', t2
 print '**********************************************************************'
-print 'Uncapacitated Fixed Charge Location Problem'
+print 'Capacitated Fixed Charge Location Problem'
 print '\nJames Gaboardi, 2015'
-m.write('path.lp')
+m.write('/Users/jgaboardi/Desktop/LP.lp')
