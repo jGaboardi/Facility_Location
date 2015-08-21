@@ -55,7 +55,7 @@ for dest in service_nodes:
 mPMaxP.update()
 mPMaxP.setObjective(gbp.quicksum(Sij[orig][dest]*client_var[orig][dest] 
                         for orig in client_nodes for dest in service_nodes), 
-                        gbp.GRB.MAXIMIZE)
+                        gbp.GRB.MINIMIZE)
 for orig in client_nodes:
     mPMaxP.addConstr(gbp.quicksum(client_var[orig][dest] 
                         for dest in service_nodes) == 1)
