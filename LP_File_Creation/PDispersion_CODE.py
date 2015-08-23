@@ -37,3 +37,15 @@ import numpy as np
 
 
 #    2. DEFINED FUNCTIONS
+# Facility Constraint
+# *** '= 1\n' indicates 1 facility  
+def get_p_facilities(cols):
+    outtext = ''
+    for i in range(1, cols+1):
+        temp = ''
+        temp += 'y' + str(i)
+        outtext += temp + ' + '
+	outtext = ' c1:  ' + outtext[:-2] + '= 2\n'
+    return outtext
+
+# Inter-Facility Distance Constraints   n(n-1)/2
