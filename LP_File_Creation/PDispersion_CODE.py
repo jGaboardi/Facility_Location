@@ -37,9 +37,16 @@ import numpy as np
 
 
 #    2. DEFINED FUNCTIONS
+# Objective Function
+#
+def get_objective_function_pDisp():
+    outtext = ''
+
+
+
 # Facility Constraint
 # *** '= 1\n' indicates 1 facility  
-def get_p_facilities(cols):
+def get_p_facilities():
     outtext = ''
     for i in range(1, cols+1):
         temp = ''
@@ -49,3 +56,49 @@ def get_p_facilities(cols):
     return outtext
 
 # Inter-Facility Distance Constraints   n(n-1)/2
+def get_inter_facility():
+    outtext = ''
+    counter=0
+    for orig in service_nodes:
+        for dest in service_nodes:
+            if dest > orig:
+                counter = counter+1
+                mPDP.addConstr(
+                dij[orig][dest]+M*2-M*serv_var[orig]-M*serv_var[dest]-D>=0,
+                        'Inter-Fac_Dist_Constraint_%i' % counter)
+            else:
+                pass
+
+
+
+
+
+#    4. START TEXT FOR .lp FILE
+# Declaration of Objective Function
+text = "p-Dispersion Facility Location Problem\n"
+text += "'''\n"
+text += 'Maximize\n'          
+text += get_objective_function_pDisp()
+# Declaration of Constraints
+text += 'Subject To\n'                    
+text += get_p_facilities()
+text += get_inter_facility()
+# Declaration of Bounds
+text += 'Bounds\n' 
+text += get_bounds_allocation()
+text += get_bounds_facility()
+# Declaration of Decision Variables form: Binaries
+text += 'Binaries\n'
+text += get_allocation_decision_variables_UFLP()
+text += get_facility_decision_variables_UFLP()
+text += '\n'
+text += 'End\n'
+text += "'''\n"
+text += "© James Gaboardi, 2015"                
+
+
+#   5. CREATE & WRITE .lp FILE TO DISK
+# Fill path name  --  File name must not have spaces.
+outfile = open('/Users/jgaboardi/Desktop/LP.lp', 'w')
+outfile.write(text)
+outfile.close()
