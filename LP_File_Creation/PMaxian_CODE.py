@@ -45,8 +45,9 @@ import numpy as np
 
 #    2. DEFINED FUNCTIONS
 # Objective Function 
-# The objective of this function is to minimize the average travel cost along the network.
-# *** Minimize(Z)
+# The objective of this function is to maxiimize the total travel 
+#    cost along the network.
+# *** Maximize(Z)
 def get_objective_function_p_maxian(Sij):
     outtext = ' obj: '
     for i in range(rows):
