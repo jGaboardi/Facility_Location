@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#p-Median Facility Location Problem
+#Uncapacitated Fixed-charge Facility Location Problem
 #This script creates a linear programming file to be read into an optimizer.
 '''
 GNU LESSER GENERAL PUBLIC LICENSE
@@ -12,12 +12,6 @@ GNU LESSER GENERAL PUBLIC LICENSE
 # Developed by:  James D. Gaboardi, MSGIS
 #                03/2015
 #                © James Gaboardi
-
-
-# **Attention** **Adjust the following**
-#	74 --> 'c##' needs to changed depending on data and constraint number based on .lp file
-#	91 --> 'c##' needs to changed depending on data and constraint number based on .lp file
-#	91 --> '= ##\n' needs to changed for the number of facilities to be sited
 
 #   Terminology & General Background for Facility Location and Summation Notation:
 
@@ -46,20 +40,24 @@ import numpy as np
 # Objective Function 
 # The objective of this function is to minimize the average travel cost along the network.
 # *** Minimize(Z)
-def get_objective_function_p_maxian(Sij):
+def get_objective_function_UFLP():
     outtext = ' obj: '
     for i in range(rows):
-        temp = ''
+        temp1 = ''
         for j in range(cols):
-            temp += str(Sij[i,j]) + ' x' + str(i+1) + '_' + str(j+1) + ' + '
-        outtext += temp + ' \n'
+            temp1 += str(c*Sij[i,j]) + ' x' + str(i+1) + '_' + str(j+1) + ' + '
+        outtext += temp1 + ' \n'
+    for j in range(cols):
+        temp2 = ''
+        temp2 += str(fj[j,0]) +  ' y' + str(j+1) + ' + '
+        outtext += temp2
     outtext = outtext[:-4] + ' \n'
     return outtext
 
 # Assignment Constraints
 # This indicates a client can only be served by one facility.
 # Each column in the matrix must equal 1.
-def get_assignment_constraints(rows):
+def get_assignment_constraints():
     counter = 0
     outtext = ''
     for i in range(1,cols+1):
@@ -71,7 +69,7 @@ def get_assignment_constraints(rows):
     return outtext
 
 # Opening Constraints
-def get_opening_constraints_p_maxian(Sij):
+def get_opening_constraints_UFLP():
     counter = 5
     outtext = ''
     for i in range(1, rows+1):
@@ -80,20 +78,8 @@ def get_opening_constraints_p_maxian(Sij):
             outtext += ' c' + str(counter) + ':  - x' + str(j) + '_' + str(i) + ' + ' + 'y' + str(i) +  ' >= 0\n'
     return outtext
 
-# Facility Constraint
-# Indicate how many facilties will be sited in 'outtext' below.
-# *** '= 1\n' indicates 1 facility
-def get_p_facilities(rows):
-    outtext = ''
-    for i in range(1, rows+1):
-        temp = ''
-        temp += 'y' + str(i)
-        outtext += temp + ' + '
-    outtext = ' c31:  ' + outtext[:-2] + '= 1\n'
-    return outtext
-
 # Declaration of Bounds
-def get_bounds_allocation(Sij):
+def get_bounds_allocation():
     outtext = ''
     for i in range(rows):
         temp = ''
@@ -102,7 +88,7 @@ def get_bounds_allocation(Sij):
         outtext += temp    
     return outtext
 
-def get_bounds_facility(Sij):
+def get_bounds_facility():
     outtext = ''
     for i in range(rows):
         outtext += ' 0 <= y' + str(i+1) + ' <= 1\n'
@@ -110,7 +96,7 @@ def get_bounds_facility(Sij):
 
 # Declaration of Decision Variables (form can be: Binary, Integer, etc.)
 # In this case decision variables are binary.
-def get_allocation_decision_variables_p_maxian(Sij):
+def get_allocation_decision_variables_UFLP():
     outtext = ''
     for i in range(1, rows+1):
         temp = ''
@@ -119,7 +105,7 @@ def get_allocation_decision_variables_p_maxian(Sij):
         outtext += temp
     return outtext
     
-def get_facility_decision_variables_p_maxian(rows):  
+def get_facility_decision_variables_UFLP():  
     outtext = ''
     for i in range (1, rows+1):
         outtext += ' y' + str(i) + ' '
@@ -127,32 +113,34 @@ def get_facility_decision_variables_p_maxian(rows):
  
     
 #    3. DATA Creation & VARIABLE DECLARATION
-Ai = np.random.randint(1, 20, 5)
-Ai = Ai.reshape(5, 1)
-Cij = np.random.randint(1, 50, 25)
-Cij = Cij.reshape(5, 5)
-Sij = Ai * Cij
+hi = np.random.randint(1, 20, 5)
+hi = hi.reshape(5, 1)
+fj = np.random.randint(30, 50, 5)
+fj = fj.reshape(5, 1)
+dij = np.random.randint(1, 50, 25)
+dij = dij.reshape(5, 5)
+c = 1.25
+Sij = hi * dij
 rows, cols = Sij.shape
 
 #    4. START TEXT FOR .lp FILE
 # Declaration of Objective Function
-text = "p-Maxian Facility Location Problem\n"
+text = "Uncapacitated Fixed-Charge Facility Location Problem\n"
 text += "'''\n"
-text += 'Maximize\n'          
-text += get_objective_function_p_maxian(Sij)
+text += 'Minimize\n'          
+text += get_objective_function_UFLP()
 # Declaration of Constraints
 text += 'Subject To\n'                    
-text += get_assignment_constraints(rows)
-text += get_opening_constraints_p_maxian(Sij)
-text += get_p_facilities(rows)
+text += get_assignment_constraints()
+text += get_opening_constraints_UFLP()
 # Declaration of Bounds
 text += 'Bounds\n' 
-text += get_bounds_allocation(Sij)
-text += get_bounds_facility(Sij)
+text += get_bounds_allocation()
+text += get_bounds_facility()
 # Declaration of Decision Variables form: Binaries
 text += 'Binaries\n'
-text += get_allocation_decision_variables_p_maxian(Sij)
-text += get_facility_decision_variables_p_maxian(rows)
+text += get_allocation_decision_variables_UFLP()
+text += get_facility_decision_variables_UFLP()
 text += '\n'
 text += 'End\n'
 text += "'''\n"
@@ -161,6 +149,6 @@ text += "© James Gaboardi, 2015"
 
 #   5. CREATE & WRITE .lp FILE TO DISK
 # Fill path name  --  File name must not have spaces.
-outfile = open('LP.lp', 'w')
+outfile = open('/Users/jgaboardi/Desktop/LP.lp', 'w')
 outfile.write(text)
 outfile.close()

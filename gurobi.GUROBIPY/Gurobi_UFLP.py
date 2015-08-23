@@ -27,17 +27,17 @@ t1 = time.time()
 #     1. Read In (or Create) Data
 # CREATE
 # Distance Matrix
-dij = np.random.randint(10, 20, 900)
-dij = dij.reshape(30,30)
+dij = np.random.randint(1, 20, 16)
+dij = dij.reshape(4,4)
 # Weights Matrix
-hi = np.random.randint(1, 50, 30)
+hi = np.random.randint(1, 10, 4)
 hi = hi.reshape(len(hi),1)
 # Cost per mile
 c = 1.25
 # Demand Sum
 hiSum = np.sum(hi)
 # Fixed Facility Cost
-Fj = np.random.randint(6, 100, 30)
+Fj = np.random.randint(10, 16, 4)
 Fj = Fj.reshape(1,len(Fj))
 FjSum = np.sum(Fj)
 # Weighted Cost Coefficients for Decision Variables
