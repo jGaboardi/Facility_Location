@@ -13,6 +13,18 @@ GNU LESSER GENERAL PUBLIC LICENSE
 #                08/2015
 #                © James Gaboardi
 
+'''
+Adapted from:   
+    Maliszewski, P. J. 
+    M. J. Kuby
+    and M. W. Horner 
+    2012. 
+    A comparison of multi-objective spatial dispersion models for managing 
+        critical assets in urban areas. 
+    Computers, Environment and Urban Systems. 
+    36 (4):331–341.
+'''
+
 
 #  Terminology & General Background for Facility Location and 
 #                    Summation Notation:
