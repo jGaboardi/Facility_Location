@@ -27,18 +27,17 @@ t1 = time.time()
 #     1. Read In (or Create) Data
 # CREATE
 # Distance Matrix
-dij = np.random.randint(10, 20, 2500)
-dij = dij.reshape(50,50)
+dij = np.random.randint(10, 20, 25)
+dij = dij.reshape(5,5)
 # Demand Matrix
-hi = np.random.randint(25, 50, 50)
+hi = np.random.randint(25, 50, 5)
 #hi = hi.reshape(len(hi),1)
 # Demand Sum
 hiSum = np.sum(hi)
 # Cost per mile
 c = 1.25
 # Capacity
-kj = np.random.randint(100, 150, 50)
-#kj = kj.reshape((1,len(kj)))
+kj = np.random.randint(100, 150, 5)
 kjSum = np.sum(kj)
 # Fixed Facility Cost
 Fj = np.random.randint(75, 100, 50)
