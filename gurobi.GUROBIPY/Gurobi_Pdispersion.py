@@ -35,8 +35,8 @@ import datetime as dt
 
 def GbpPDisp():
     # Distance Matrix --> 20x20
-    dij = np.random.randint(100, 1000, 400)
-    dij = dij.reshape(20,20)
+    dij = np.random.randint(10, 50, 16)
+    dij = dij.reshape(4,4)
     # Service Nodes
     service_nodes = range(len(dij))
     # Max Value in dij
