@@ -17,9 +17,10 @@ GNU LESSER GENERAL PUBLIC LICENSE
 #   Terminology & General Background for 
 #            Facility Location and Summation Notation:
 
-#   *        The objective of the Uncapacitated Fixed-Charge Facility Location 
+#   *        The objective of the Capacitated Fixed-Charge Facility Location 
 #                Problem is to minimize the cost to serve clients and the
-#                number of facilities to serve clients.
+#                number of facilities to serve clients while taking the
+#                capacity of service facilities into consideration.
 
 #   *   [i] - a specific origin
 #   *   [j] - a specifc destination
@@ -27,6 +28,7 @@ GNU LESSER GENERAL PUBLIC LICENSE
 #   *   [m] - the set of destinations
 #   *   [hi] - demand at each node (usually population)
 #   *   [Fj] - cost to site a facility at each candidate location
+#   *   [kj] - capacity of each service facility
 #   *   [dij] - travel costs between nodes
 #   *   [Sij] - weighted travel costs [(hi)(dij)]
 #   *   [x#_#] - the decision variable in # row, # column position in the matrix
@@ -41,9 +43,10 @@ import numpy as np
 
 #    2. DEFINED FUNCTIONS
 # Objective Function 
-# The objective of this function is to minimize the average travel cost along the network.
-# *** Minimize(Z)
-def get_objective_function_UFLP():
+# The objective of this function is to minimize the total weighted travel 
+#        cost along the network while siting facilities based on demand and
+#        location site cost.
+def get_objective_function_CFLP():
     outtext = ' obj: '
     for i in range(rows):
         temp1 = ''
@@ -72,13 +75,25 @@ def get_assignment_constraints():
     return outtext
 
 # Opening Constraints
-def get_opening_constraints_UFLP():
+def get_opening_constraints_CFLP():
     counter = 5
     outtext = ''
     for i in range(1, rows+1):
         for j in range(1, cols+1):
             counter = counter + 1 
             outtext += ' c' + str(counter) + ':  - x' + str(j) + '_' + str(i) + ' + ' + 'y' + str(i) +  ' >= 0\n'
+    return outtext
+
+# Capacity Constraints
+def get_capacity_constraints_CFLP():
+    counter = 30
+    outtext = ''
+    for j in range(len(kj)):
+        counter = counter + 1
+        temp = ' c' + str(counter) + ':  -' + str(kj[j,0]) + ' y' + str(j+1) + ' + '
+        for i in range(len(hi)):
+            temp += str(hi[j,0]) + ' x' + str(i+1) + '_' + str(j+1) + ' + '
+        outtext += temp[:-2] + '<= 0\n'
     return outtext
 
 # Declaration of Bounds
@@ -99,7 +114,7 @@ def get_bounds_facility():
 
 # Declaration of Decision Variables (form can be: Binary, Integer, etc.)
 # In this case decision variables are binary.
-def get_allocation_decision_variables_UFLP():
+def get_allocation_decision_variables_CFLP():
     outtext = ''
     for i in range(1, rows+1):
         temp = ''
@@ -108,7 +123,7 @@ def get_allocation_decision_variables_UFLP():
         outtext += temp
     return outtext
     
-def get_facility_decision_variables_UFLP():  
+def get_facility_decision_variables_CFLP():  
     outtext = ''
     for i in range (1, rows+1):
         outtext += ' y' + str(i) + ' '
@@ -120,6 +135,8 @@ hi = np.random.randint(1, 20, 5)
 hi = hi.reshape(5, 1)
 fj = np.random.randint(30, 50, 5)
 fj = fj.reshape(5, 1)
+kj = np.random.randint(45, 90, 5)
+kj = kj.reshape(5, 1)
 dij = np.random.randint(1, 50, 25)
 dij = dij.reshape(5, 5)
 c = 1.25
@@ -128,22 +145,23 @@ rows, cols = Sij.shape
 
 #    4. START TEXT FOR .lp FILE
 # Declaration of Objective Function
-text = "Uncapacitated Fixed-Charge Facility Location Problem\n"
+text = "Capacitated Fixed-Charge Facility Location Problem\n"
 text += "'''\n"
 text += 'Minimize\n'          
-text += get_objective_function_UFLP()
+text += get_objective_function_CFLP()
 # Declaration of Constraints
 text += 'Subject To\n'                    
 text += get_assignment_constraints()
-text += get_opening_constraints_UFLP()
+text += get_opening_constraints_CFLP()
+text += get_capacity_constraints_CFLP()
 # Declaration of Bounds
 text += 'Bounds\n' 
 text += get_bounds_allocation()
 text += get_bounds_facility()
 # Declaration of Decision Variables form: Binaries
 text += 'Binaries\n'
-text += get_allocation_decision_variables_UFLP()
-text += get_facility_decision_variables_UFLP()
+text += get_allocation_decision_variables_CFLP()
+text += get_facility_decision_variables_CFLP()
 text += '\n'
 text += 'End\n'
 text += "'''\n"
@@ -152,6 +170,6 @@ text += "© James Gaboardi, 2015"
 
 #   5. CREATE & WRITE .lp FILE TO DISK
 # Fill path name  --  File name must not have spaces.
-outfile = open('/Users/jgaboardi/Desktop/LP.lp', 'w')
+outfile = open('LP.lp', 'w')
 outfile.write(text)
 outfile.close()
