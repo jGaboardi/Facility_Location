@@ -40,15 +40,14 @@ import numpy as np
 # Objective Function
 #
 def get_objective_function_pDisp():
-    outtext = ''
-
-
+    outtext = 'M'
+    return outtext
 
 # Facility Constraint
 # *** '= 1\n' indicates 1 facility  
 def get_p_facilities():
     outtext = ''
-    for i in range(1, cols+1):
+    for i in range(1, service_nodes+1):
         temp = ''
         temp += 'y' + str(i)
         outtext += temp + ' + '
@@ -63,20 +62,24 @@ def get_inter_facility():
         for dest in service_nodes:
             if dest > orig:
                 counter = counter+1
+                
+                
                 mPDP.addConstr(
                 dij[orig][dest]+M*2-M*serv_var[orig]-M*serv_var[dest]-D>=0,
                         'Inter-Fac_Dist_Constraint_%i' % counter)
             else:
                 pass
 
+
+
 #    3. DATA Creation & VARIABLE DECLARATION
 # Distance Matrix
 dij = np.random.randint(10, 50, 16)
 dij = dij.reshape(4,4)
 # Service Nodes
-    service_nodes = range(len(dij))
-    # Max Value in dij
-    M = np.amax(dij)
+service_nodes = range(len(dij))
+# Max Value in dij
+M = np.amax(dij)
 
 
 #    4. START TEXT FOR .lp FILE
