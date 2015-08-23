@@ -34,7 +34,7 @@ import gurobipy as gbp
 import datetime as dt
 
 def GbpPDisp():
-    # Distance Matrix --> 20x20
+    # Distance Matrix 
     dij = np.random.randint(10, 50, 16)
     dij = dij.reshape(4,4)
     # Service Nodes
