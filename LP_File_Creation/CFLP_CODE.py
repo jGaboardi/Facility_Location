@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#Uncapacitated Fixed-charge Facility Location Problem
+#Capacitated Fixed-charge Facility Location Problem
 
 #This script creates a linear programming file to be read into an optimizer.
 '''
