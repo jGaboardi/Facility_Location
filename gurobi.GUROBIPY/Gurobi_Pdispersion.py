@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 GNU LESSER GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
@@ -9,6 +10,19 @@ GNU LESSER GENERAL PUBLIC LICENSE
 # Building and Optimizing a p-Dispersion facility location problem in 
 #        Python/Gurobi[gurobipy]
 #
+
+'''
+Adapted from:   
+    Maliszewski, P. J. 
+    M. J. Kuby
+    and M. W. Horner 
+    2012. 
+    A comparison of multi-objective spatial dispersion models for managing 
+        critical assets in urban areas. 
+    Computers, Environment and Urban Systems. 
+    36 (4):331–341.
+'''
+
 # Maximizing the minimum distance bewteen facilities (generally noxious)
 
 # Terminology & General Background for Facility Location and Summation Notation:
