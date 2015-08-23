@@ -31,6 +31,7 @@ GNU LESSER GENERAL PUBLIC LICENSE
 # Imports
 import numpy as np
 import gurobipy as gbp
+import datetime as dt
 
 def GbpPDisp():
     # Distance Matrix --> 20x20
@@ -100,6 +101,8 @@ def GbpPDisp():
     print '    | Candidate Facilities [p] ---------------- ', len(selected)
     print '    | Largest Value in dij (M) ---------------- ', M
     print '    | Objective Value (D) --------------------- ', mPDP.objVal
+    print '    | Matrix Dimensions ----------------------- ', dij.shape
+    print '    | Date/Time ------------------------------- ', dt.datetime.now()
     print '**********************************************************************'
     print '    -- The p-Dispersion Problem -- '
 
