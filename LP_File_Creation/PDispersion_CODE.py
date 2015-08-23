@@ -25,12 +25,11 @@ GNU LESSER GENERAL PUBLIC LICENSE
 #   *   [j] - a specifc destination
 #   *   [n] - the set of origins
 #   *   [m] - the set of destinations
-#   *   [Cij] - travel costs between nodes
-#   *   [D] - the maximum travel costs between service facilities and clients 
-#   *   [x#_#] - the decision variable in # row, # column position in the matrix
-#   *	[y#] - service facility in the # row
+#   *   [dij] - matrix of travel costs between nodes
+#   *   [M] - largest value in dij
+#   *   [D] - Maximized minimum distance between facilities
+#   *	[yi] - each service facility
 #   *   [p] - the number of facilities to be sited
-
 
 #    1. IMPORTS
 # Other imports may be necessary for matrix creation and manipulation 
