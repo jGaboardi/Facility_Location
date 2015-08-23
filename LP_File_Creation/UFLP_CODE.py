@@ -41,8 +41,9 @@ import numpy as np
 
 #    2. DEFINED FUNCTIONS
 # Objective Function 
-# The objective of this function is to minimize the average travel cost along the network.
-# *** Minimize(Z)
+# The objective of this function is to minimize the total weighted travel 
+#        cost along the network while siting facilities based on demand and
+#        location site cost.
 def get_objective_function_UFLP():
     outtext = ' obj: '
     for i in range(rows):
