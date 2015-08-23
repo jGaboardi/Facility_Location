@@ -69,8 +69,14 @@ def get_inter_facility():
             else:
                 pass
 
-
-
+#    3. DATA Creation & VARIABLE DECLARATION
+# Distance Matrix
+dij = np.random.randint(10, 50, 16)
+dij = dij.reshape(4,4)
+# Service Nodes
+    service_nodes = range(len(dij))
+    # Max Value in dij
+    M = np.amax(dij)
 
 
 #    4. START TEXT FOR .lp FILE
