@@ -74,9 +74,10 @@ def get_inter_facility():
         for dest in range(service_nodes):
             if dest > orig:
                 counter = counter+1
-                #outtext += ' c' + str(counter) + ':  ' + str(dij[orig,dest]+2*M) + ' - ' + str(M) + ' y' + str(orig+1) + ' - ' + str(M) + ' y' + str(dest+1) +  ' - ' + 'D >= 0\n'
-                outtext += ' c' + str(counter) + ':   - ' + str(M) + ' y' + str(orig+1) + ' - ' + str(M) + ' y' + str(dest+1) +  ' - ' + 'D >= -' + str(dij[orig,dest]+2*M) + '\n'
-
+                outtext += ' c' + str(counter) + ':   - ' +
+                            str(M) + ' y' + str(orig+1) + 
+                            ' - ' + str(M) + ' y' + str(dest+1) +  
+                            ' - ' + 'D >= -' + str(dij[orig,dest]+2*M) + '\n'
             else:
                 pass
     return outtext
