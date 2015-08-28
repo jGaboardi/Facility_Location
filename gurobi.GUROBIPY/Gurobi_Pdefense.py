@@ -28,53 +28,73 @@ GNU LESSER GENERAL PUBLIC LICENSE
 # Imports
 import numpy as np
 import gurobipy as gbp
-# Distance Matrix --> 20x20
-Cij = np.random.randint(100, 1000, 400)
-Cij = Cij.reshape(20,20)
-# Service Nodes
-service_nodes = range(len(Cij))
+import time
+t1 = time.time()   
 
+def GbpPdefSum():    
+    # Distance Matrix --> 20x20
+    Cij = np.random.randint(100, 1000, 400)
+    Cij = Cij.reshape(20,20)
+    # Service Nodes
+    service_nodes = range(len(Cij))
+    
+    
+    #     2. Create Model, Set MIP Focus, Add Variables, & Update Model
+    mPDPsum = gbp.Model(' -- p-Defense-Sum -- ')
+    # Set MIP Focus to 2 for optimality
+    gbp.setParam('MIPFocus', 2)
+    
+    #     3. Add Variables
+    # Add Decision Variables
+    # Service Facility IxJ
+    serv_var = []
+    for dest in service_nodes:
+        serv_var.append(mPDPsum.addVar(vtype=gbp.GRB.BINARY,
+                                    ub = 1,
+                                    name='y'+str(dest+1)))
+    
+    # Update Model Variables
+    mPDPsum.update()
+    
+    #     4. Set Objective --> Maximize Sum of Distance        
+    mPDPsum.setObjective(gbp.quicksum(Cij[orig][dest]*serv_var[orig] 
+                                    for orig in service_nodes 
+                                    for dest in service_nodes), 
+                                    gbp.GRB.MAXIMIZE)            
+    
+    #     5. Add Constriants         
+    # Add Facility Constraint --> [p=2]
+    mPDPsum.addConstr(gbp.quicksum(serv_var[dest] for dest in service_nodes) == 2)                        
+    
+    #     6. Optimize and Print Results
+    try:
+        mPDPsum.optimize()
+    except Exception as e:
+        print '   ################################################################'
+        print ' < ISSUE : ', e, ' >'
+        print '   ################################################################'     
+    t2 = time.time() - t1
+    mPDPsum.write('path.lp')
+    print '\n*************************************************************************'
+    selected = []
+    for v in mPDPsum.getVars():
+        if v.x > 0:
+            var = '%s' % v.VarName
+            selected.append(var)
+            print '    |                                            ', var
+    print '    | Selected Facility Locations --------------  ^^^^ '
+    print '    | Candidate Facilities [p] ----------------- ', len(selected)
+    val = mPDPsum.objVal
+    print '    | Objective Value -------------------------- ', val
+    print '    | Real Time to Optimize (sec.) ------------- ', t2
+    print '*************************************************************************'
+    print 'p-Defense-Sum Location Problem'
+    
+try:
+    GbpPdefSum()
+    print '\nJames Gaboardi, 2015'
+except Exception as e:
+        print '   ################################################################'
+        print ' < ISSUE : ', e, ' >'
+        print '   ################################################################'  
 
-#     2. Create Model, Set MIP Focus, Add Variables, & Update Model
-mPDPsum = gbp.Model(' -- p-Defense-Sum -- ')
-# Set MIP Focus to 2 for optimality
-gbp.setParam('MIPFocus', 2)
-
-#     3. Add Variables
-# Add Decision Variables
-# Service Facility IxJ
-serv_var = []
-for dest in service_nodes:
-    serv_var.append(mPDPsum.addVar(vtype=gbp.GRB.BINARY,
-                                ub = 1,
-                                name='y'+str(dest+1)))
-
-# Update Model Variables
-mPDPsum.update()
-
-#     4. Set Objective --> Maximize Sum of Distance        
-mPDPsum.setObjective(gbp.quicksum(Cij[orig][dest]*serv_var[orig] 
-                                  for orig in service_nodes 
-                                  for dest in service_nodes), 
-                                   gbp.GRB.MAXIMIZE)            
-
-#     5. Add Constriants         
-# Add Facility Constraint --> [p=2]
-mPDPsum.addConstr(gbp.quicksum(serv_var[dest] for dest in service_nodes) == 2)                        
-
-#     6. Optimize and Print Results
-mPDPsum.optimize()
-mPDPsum.write('path.lp')
-print '\n*************************************************************************'
-selected = []
-for v in mPDPsum.getVars():
-    if v.x > 0:
-        var = '%s' % v.VarName
-        selected.append(var)
-        print '    |                                            ', var
-print '    | Selected Facility Locations --------------  ^^^^ '
-print '    | Candidate Facilities [p] ----------------- ', len(selected)
-val = mPDPsum.objVal
-print '    | Objective Value -------------------------- ', val
-print '*************************************************************************'
-print '\nJames Gaboardi, 2015'
