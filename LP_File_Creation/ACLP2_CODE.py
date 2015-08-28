@@ -36,25 +36,15 @@ def anti_cover_2_objective_function():
 #Add Adjacency Pairwise Constraints
 def adjacency_pairwise_constraints():    
     outtext = ''
-    temp = ''
+    counter = 0
     for i in range(rows):
         for j in range(cols):
             if i != j and Dij[i][j] < r:
-                temp += 'x'+str(i) + ' + '+ 'x' + str(j) + ' <= 1\n'
+                counter = counter + 1
+                outtext += ' c' + str(counter) + ':  x' + str(i+1) + ' + '+ 'x' + str(j+1) + ' <= 1\n'
             else:
                 pass
-        outtext += temp
     return outtext
-    
-'''    
-    for orig in service_nodes:
-        for dest in service_nodes:
-            if orig != dest and Dij[orig][dest] < r:
-                m.addConstr((serv_var[orig] + serv_var[dest]  <= 1))    
-            else:
-                pass
-'''
-
 
 # Declaration of Binaries
 def anti_cover_2_binaries():
@@ -77,7 +67,7 @@ def get_bounds_facility():
 Dij = np.random.randint(1, 20, 16)
 Dij = Dij.reshape(4,4)
 # Minimum Separation Distance
-r = 6
+r = 10
 service_nodes = range(len(Dij))
 rows, cols = Dij.shape
 
@@ -88,7 +78,7 @@ text = "Anti Cover 2 Location Problem\n"
 text += "'''\n"
 text += 'Maximize\n'
 text += anti_cover_2_objective_function()
-text += '\n'
+text += '\n\n'
 # Declaration of Constraints
 text += 'Subject To\n'
 text += adjacency_pairwise_constraints()
@@ -100,7 +90,7 @@ text += '\n'
 # Declaration of Decision Variables form: Binaries
 text += 'Binaries\n'
 text += anti_cover_2_binaries()
-text += '\n'
+text += '\n\n'
 text += 'End\n'
 text += "'''\n"
 text += "© James Gaboardi, 2015"

@@ -23,7 +23,7 @@ def GbpACLP2():
     Dij = np.random.randint(1, 20, 16)
     Dij = Dij.reshape(4,4)
     # Minimum Separation Distance
-    r = 6
+    r = 10
     service_nodes = range(len(Dij))
     
     #     2. Create Model, Set MIP Focus, Add Variables, & Update Model
