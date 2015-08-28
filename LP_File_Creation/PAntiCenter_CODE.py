@@ -14,7 +14,8 @@ GNU LESSER GENERAL PUBLIC LICENSE
 #                © James Gaboardi
 
 
-#   Terminology & General Background for Facility Location and Summation Notation:
+#   Terminology & General Background for Facility Location 
+#            and Summation Notation:
 
 #   *        The objective of the p-Anti Center Facility Location Problem is 
 #                to maximize the maximum cost of travel between 
@@ -24,7 +25,7 @@ GNU LESSER GENERAL PUBLIC LICENSE
 #   *   [j] - a specifc destination
 #   *   [n] - the set of origins
 #   *   [m] - the set of destinations
-#   *   [Cij] - travel costs between nodes
+#   *   [Dij] - travel costs between nodes
 #   *   [W] - the maximum travel costs between service facilities and clients 
 #   *   [x#_#] - the decision variable in # row, # column position in the matrix
 #   *	[y#] - service facility in the # row
@@ -64,26 +65,24 @@ def get_p_facilities():
 
 # Opening Constraints
 def get_opening_constraints_p_center():
-    counter = 151
+    counter = 5
     outtext = ''
     for i in range(1, rows+1):
         for j in range(1, cols+1):
             counter = counter + 1 
-            outtext += ' c' + str(counter) + ':  - x' + str(i) + '_' + str(j) + ' + ' + 'y' + str(i) +  ' >= 0\n'
+            outtext += ' c' + str(counter) + ':  - x' + str(j) + '_' + str(i) + ' + ' + 'y' + str(i) +  ' >= 0\n'
     return outtext
 
 # Maximum Cost Constraints
-# This indicates that the maximum travel cost from any client to service facility is greater than the travel cost from client to client.
-# This code chunk works by summing the columns not rows
 def get_max_cost():
-    counter = 1501
+    counter = 21
     outtext = ''
-    for j in range(cols):
+    for i in range(rows):
         counter = counter + 1
         temp = ' c' + str(counter) + ':  '
-        for i in range(rows):
-            temp += str(Cij[i,j]) + ' x' + str(i+1) + '_' + str(j+1) + ' + '
-        outtext += temp[:-2] + '- W <= 0\n'
+        for j in range(cols):
+            temp += str(Dij[i,j]) + ' x' + str(i+1) + '_' + str(j+1) + ' + '
+        outtext += temp[:-2] + '- W >= 0\n'
     return outtext
 
 # Declaration of Bounds
@@ -125,9 +124,9 @@ def get_facility_decision_variables():
 #    3. DATA READS & VARIABLE DECLARATION
 
 
-Cij = np.random.randint(1,20,16)
-Cij = Cij.reshape(4,4)
-rows,cols = Cij.shape
+Dij = np.random.randint(1,20,16)
+Dij = Dij.reshape(4,4)
+rows,cols = Dij.shape
 
 
 #    4. START TEXT FOR .lp FILE
