@@ -122,8 +122,6 @@ def get_facility_decision_variables():
 
 
 #    3. DATA READS & VARIABLE DECLARATION
-
-
 Dij = np.random.randint(1,20,16)
 Dij = Dij.reshape(4,4)
 rows,cols = Dij.shape
