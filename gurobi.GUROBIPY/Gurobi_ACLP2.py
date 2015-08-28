@@ -20,10 +20,10 @@ t1 = time.time()
 
 def GbpACLP2():
     # Cost Matrix
-    Dij = np.random.randint(1, 2000, 2500)
-    Dij = Dij.reshape(50,50)
+    Dij = np.random.randint(1, 20, 16)
+    Dij = Dij.reshape(4,4)
     # Minimum Separation Distance
-    r = 500
+    r = 6
     service_nodes = range(len(Dij))
     
     #     2. Create Model, Set MIP Focus, Add Variables, & Update Model
