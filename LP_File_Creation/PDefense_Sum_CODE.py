@@ -12,3 +12,7 @@ GNU LESSER GENERAL PUBLIC LICENSE
 # Developed by:  James D. Gaboardi, MSGIS
 #                08/2015
 #                © James Gaboardi
+
+# Maximizing the total distance bewteen facilities (generally noxious)
+
+
