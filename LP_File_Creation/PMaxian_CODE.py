@@ -15,11 +15,6 @@ GNU LESSER GENERAL PUBLIC LICENSE
 #                © James Gaboardi
 
 
-# **Attention** **Adjust the following**
-#	74 --> 'c##' needs to changed depending on data and constraint number based on .lp file
-#	91 --> 'c##' needs to changed depending on data and constraint number based on .lp file
-#	91 --> '= ##\n' needs to changed for the number of facilities to be sited
-
 #   Terminology & General Background for Facility Location and Summation Notation:
 
 #   *        The objective of the p-median Facility Location Problem is to minimize the average cost 
