@@ -61,7 +61,7 @@ rows,cols = Cij.shape
 text = "p-Defense-Sum Facility Location Problem\n"
 text += "'''\n"
 text += 'Maximize\n'
-
+text +=
 # Declaration of Constraints
 text += 'Subject To\n'                    
 text += get_p_facilities()
