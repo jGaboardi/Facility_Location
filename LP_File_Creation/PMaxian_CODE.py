@@ -15,11 +15,12 @@ GNU LESSER GENERAL PUBLIC LICENSE
 #                © James Gaboardi
 
 
-#   Terminology & General Background for Facility Location and Summation Notation:
+#   Terminology & General Background for Facility Location and 
+#        Summation Notation:
 
 #   *        The objective of the p-Maxianian Facility Location Problem is to 
-#            maximize the average cost 
-#            of travel (between service facilities and clients).
+#            maximize the total weighted travel cost between service facilities
+#            and clients while siting p facilitied.
 
 #   *   [i] - a specific origin
 #   *   [j] - a specifc destination
@@ -28,7 +29,8 @@ GNU LESSER GENERAL PUBLIC LICENSE
 #   *   [Ai] - weight at each node (usually population)
 #   *   [Cij] - travel costs between nodes
 #   *   [Sij] - weighted travel costs [(Ai)(Cij)]
-#   *   [Z] - the sum of the weighted travel costs between all origins and destinations multiplied by the decision variables 
+#   *   [Z] - the sum of the weighted travel costs between all origins and 
+#                    destinations multiplied by the decision variables 
 #   *   [x#_#] - the decision variable in # row, # column position in the matrix
 #   *	[y#] - service facility in the # row
 #   *   [p] - the number of facilities to be sited
