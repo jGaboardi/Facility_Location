@@ -21,14 +21,22 @@ import numpy as np
 
 
 #    2. DEFINED FUNCTIONS
+def get_objective_function_p_def_sum():
+    outtext = ' obj: '
+    for i in range(rows):
+        temp = ''
+        temp += str(Cij[i][0]) + ' y' + str(i+1) + ' + '
+        outtext += temp #+ ' \n'
+    outtext = outtext[:-3] + ' \n'
+    return outtext
 
 # Facility Constraint
 # *** '= 1\n' indicates 1 facility  
 def get_p_facilities():
     outtext = ''
-    for i in range(1, cols+1):
+    for i in range(rows):
         temp = ''
-        temp += 'y' + str(i)
+        temp += 'y' + str(i+1)
         outtext += temp + ' + '
     outtext = ' c1:  ' + outtext[:-2] + '= 2\n'
     return outtext
@@ -36,7 +44,7 @@ def get_p_facilities():
 # Declaration of Bounds
 def get_bounds_facility():
     outtext = ''
-    for i in range(cols):
+    for i in range(rows):
         outtext += ' 0 <= y' + str(i+1) + ' <= 1\n'
     return outtext
 
@@ -45,14 +53,13 @@ def get_bounds_facility():
 # *** 0 for no sited facility, 1 for a sited facilty
 def get_facility_decision_variables():  
     outtext = ''
-    for i in range (1, cols+1):
-        outtext += 'y' + str(i) + ' '
-    #outtext += temp
+    for i in range(rows):
+        outtext += 'y' + str(i+1) + ' '
     return outtext 
     
 #    3. DATA READS & VARIABLE DECLARATION
 Cij = np.random.randint(1,20,16)
-Cij = Cij.reshape(4,4)
+Cij = Cij.reshape(16,1)
 rows,cols = Cij.shape
 
 
@@ -61,7 +68,7 @@ rows,cols = Cij.shape
 text = "p-Defense-Sum Facility Location Problem\n"
 text += "'''\n"
 text += 'Maximize\n'
-text +=
+text += get_objective_function_p_def_sum()
 # Declaration of Constraints
 text += 'Subject To\n'                    
 text += get_p_facilities()
