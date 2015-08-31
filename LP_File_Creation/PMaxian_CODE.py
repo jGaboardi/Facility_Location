@@ -17,7 +17,8 @@ GNU LESSER GENERAL PUBLIC LICENSE
 
 #   Terminology & General Background for Facility Location and Summation Notation:
 
-#   *        The objective of the p-median Facility Location Problem is to minimize the average cost 
+#   *        The objective of the p-Maxianian Facility Location Problem is to 
+#            maximize the average cost 
 #            of travel (between service facilities and clients).
 
 #   *   [i] - a specific origin
@@ -40,7 +41,7 @@ import numpy as np
 
 #    2. DEFINED FUNCTIONS
 # Objective Function 
-# The objective of this function is to maxiimize the total travel 
+# The objective of this function is to maximize the total weighted travel 
 #    cost along the network.
 # *** Maximize(Z)
 def get_objective_function_p_maxian(Sij):
