@@ -116,3 +116,6 @@ print '    | Real Time to Optimize (sec.) ------------- ', t2
 print '**********************************************************************'
 print '\nJames Gaboardi, 2015'
 m.write('path.lp')
+
+
+
