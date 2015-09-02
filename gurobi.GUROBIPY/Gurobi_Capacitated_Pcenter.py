@@ -96,7 +96,12 @@ def GbpCapPCent():
                             'Capacity_Constraint_%d_%d' % (dest, orig))
     
     #           5. Optimize and Print Results
-    m.optimize()
+    try:
+        m.optimize()
+    except Exception as e:
+        print '   ################################################################'
+        print ' < ISSUE : ', e, ' >'
+        print '   ################################################################'
     t2 = time.time()-t1
     print '**********************************************************************'
     selected = []
@@ -117,8 +122,6 @@ def GbpCapPCent():
     print '**********************************************************************'
     print '\nThe Capacitated p-Center Problem'
     m.write('path.lp')
-
-
 
 try:
     GbpCapPCent()
