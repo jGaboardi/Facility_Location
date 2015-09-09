@@ -8,7 +8,7 @@ GNU LESSER GENERAL PUBLIC LICENSE
 
 # Building and Optimizing a Capacitated P-median Facility Location problem in
 #        Python/Gurobi[gurobipy]
-#   Maximum [Qy]and Minimum [Mi ]Capacity Constraints Used
+#   Maximum [Qy]and Minimum [Mi] Capacity Constraints Used
 #       
 
 
