@@ -6,12 +6,10 @@ GNU LESSER GENERAL PUBLIC LICENSE
  of this license document, but changing it is not allowed.
 '''
 
-# Building and Optimizing a Capacitated p-median facility location problem in
+# Building and Optimizing a Capacitated P-median Facility Location problem in
 #        Python/Gurobi[gurobipy]
-# Change dimensions of Dij and the Facility Constraint for varying
-#        spatial extents
-# The dimension of the problem are SERVICExCLIENT (rowXcolumn)
-#        unlike equation formulation CLIENTxSERVICE (rowXcolumn)
+#   Maximum [Qy]and Minimum [Mi ]Capacity Constraints Used
+#       
 
 
 import numpy as np
@@ -19,29 +17,18 @@ import gurobipy as gbp
 import time
 t1 = time.time()
 
-#           1. Read In (or Create) Data
-'''
-# Weights Vector
-Dij = np.array ([0, 13, 8, 15, 13, 0, 12, 11, 8, 12, 0, 10, 15, 11, 10, 0])
-Dij = Dij.reshape(4, 4)
-# Demand
-qi = np.array([1000, 1200, 1400, 1350])
-# Demand Sum
-qiSum = np.sum(qi)
-# Capacity
-Qi = [0, 6000, 0, 0]
-'''
+#           1. Create Data
 # Weights Array
-Dij = np.random.randint(100, 1000, 25)
-Dij = Dij.reshape(5,5)
+Dij = np.random.randint(100, 1000, 49)
+Dij = Dij.reshape(7,7)
 # Demand
-qi = np.random.randint(1, 100, 5)
+qi = np.random.randint(1, 100, 7)
 # Demand Sum
 qiSum = np.sum(qi)
 # Max Capacity
-Qy = np.random.randint(200, 300, 5)
+Qy = np.random.randint(200, 300, 7)
 # Min Capacity
-Mi = np.random.randint(100, 200, 5)
+Mi = np.random.randint(100, 200, 7)
 
 rows, cols = Dij.shape
 client_nodes = range(rows)
