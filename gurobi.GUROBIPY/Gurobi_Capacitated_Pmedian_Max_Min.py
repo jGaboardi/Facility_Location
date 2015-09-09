@@ -27,8 +27,10 @@ qi = np.random.randint(1, 100, 20)
 qiSum = np.sum(qi)
 # Max Capacity
 Qy = np.random.randint(250, 500, 20)
+QySum = np.sum(Qy)
 # Min Capacity
 Mi = np.random.randint(150, 350, 20)
+MiSum = np.sum(Mi)
 
 rows, cols = Dij.shape
 client_nodes = range(rows)
@@ -102,8 +104,9 @@ print '    | Candidate Facilities [p] ----------------- ', len(selected)
 val = mCPMP.objVal
 print '    | Objective Value -------------------------- ', val
 avg = float(mCPMP.objVal)/float(qiSum)
-
-
+print '    | Total Demand ----------------------------- ', qiSum
+print '    | Total Minimum Capacity ------------------- ', QySum
+print '    | Total Maximum Capacity ------------------- ', MiSum
 print '    | Avg. Value / Client ---------------------- ', avg
 print '    | Real Time to Optimize (sec.) ------------- ', t2
 print '**********************************************************************'
