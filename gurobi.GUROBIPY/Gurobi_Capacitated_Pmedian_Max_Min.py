@@ -19,16 +19,16 @@ t1 = time.time()
 
 #           1. Create Data
 # Weights Array
-Dij = np.random.randint(100, 1000, 49)
-Dij = Dij.reshape(7,7)
+Dij = np.random.randint(100, 1000, 400)
+Dij = Dij.reshape(20,20)
 # Demand
-qi = np.random.randint(1, 100, 7)
+qi = np.random.randint(1, 100, 20)
 # Demand Sum
 qiSum = np.sum(qi)
 # Max Capacity
-Qy = np.random.randint(200, 300, 7)
+Qy = np.random.randint(250, 500, 20)
 # Min Capacity
-Mi = np.random.randint(100, 200, 7)
+Mi = np.random.randint(150, 350, 20)
 
 rows, cols = Dij.shape
 client_nodes = range(rows)
