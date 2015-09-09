@@ -8,6 +8,7 @@ GNU LESSER GENERAL PUBLIC LICENSE
 
 # Building and Optimizing a Capacitated p-median facility location problem in
 #        Python/Gurobi[gurobipy]
+#   Maximum Capacity Constraints
 # Change dimensions of Dij and the Facility Constraint for varying
 #        spatial extents
 # The dimension of the problem are SERVICExCLIENT (rowXcolumn)
