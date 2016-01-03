@@ -82,7 +82,7 @@ def GbpUFLP():
     # Add Opening Constraints
     for dest in service_nodes:
         for orig in client_nodes:
-            mUFLP.addConstr(serv_var[dest] - client_var[orig][dest] >= 0)
+            mUFLP.addConstr(serv_var[dest][0] - client_var[orig][dest] >= 0)
     
     #       5. Optimize and Print Results
     try:
