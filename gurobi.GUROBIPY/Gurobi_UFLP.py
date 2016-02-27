@@ -69,9 +69,9 @@ def GbpUFLP():
     mUFLP.update()       
     
     #       3. Set Objective Function
-    mUFLP.setObjective(gbp.quicksum((Fj[0][dest]*serv_var[dest][0] + 
+    mUFLP.setObjective(gbp.quicksum(Fj[0][dest]*serv_var[dest][0] + 
                             c * Sij[orig][dest]*client_var[orig][dest] 
-                            for orig in client_nodes for dest in service_nodes)), 
+                            for orig in client_nodes for dest in service_nodes), 
                             gbp.GRB.MINIMIZE)
     
     #       4. Add Constraints
