@@ -54,7 +54,7 @@ def GbpPDisp(dij, p_facilities, total_facilities):
         facility_variable.append(mPDP.addVar(vtype=gbp.GRB.BINARY,
                                                 lb=0,
                                                 ub=1,
-                                                name='y'+str(dest+1)))
+                                                name='y'+str(destination+1)))
     # Add Maximized Minimum Variable
     D = mPDP.addVar(vtype=gbp.GRB.CONTINUOUS,
                                     lb=0,
