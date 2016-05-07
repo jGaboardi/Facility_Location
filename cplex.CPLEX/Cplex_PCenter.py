@@ -1,5 +1,22 @@
 #!/usr/bin/env python
 
+'''
+GNU LESSER GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+ Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+'''
+'''
+Adapted from:   
+    Minieka, E.
+    1970. 
+    The m-Center Problem. 
+    SIAM Review. 
+    12:38–39.
+'''
+
+
 import cplex as cp
 import numpy as np
 import time
@@ -12,8 +29,6 @@ def CplexPCenter(Cij, p):
     m.parameters.emphasis.mip.set(2)                    # Set MIP emphasis to '2' --> Optimal
     m.set_problem_type(m.problem_type.LP)               # Set problem type
     m.objective.set_sense(m.objective.sense.minimize)   # Objective Function Sense  ==>  Minimize
-
-    
 
     # Cost Matrix
     client_nodes = range(len(Cij))
@@ -51,8 +66,6 @@ def CplexPCenter(Cij, p):
                             ub = [1] * len(Cij[0]), 
                             types = ['B'] * len(Cij[0]))
 
-
-    #    3. Add Constraints
     # Add Assignment Constraints
     for orig in client_nodes:       
         assignment_constraints = cp.SparsePair(ind = [client_variable[orig][dest] 
