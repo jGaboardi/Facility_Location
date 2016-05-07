@@ -9,12 +9,10 @@ GNU LESSER GENERAL PUBLIC LICENSE
 '''
 '''
 Adapted from:   
-    Maliszewski, P. J. 
-    M. J. Kuby
-    and M. W. Horner 
-    2012. 
-    A comparison of multi-objective spatial dispersion models for managing 
-        critical assets in urban areas. 
+    M. J. Kuby. 
+    1988. 
+    Programming models for facility dispersion: the p-dispersion 
+        and maxisum dispersion problems. 
     Computers, Environment and Urban Systems. 
     36 (4):331–341.
 '''
