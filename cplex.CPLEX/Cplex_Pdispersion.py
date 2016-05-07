@@ -109,7 +109,7 @@ def CplexPDisp(dij, p_facilities, total_facilities):
     for f in facility_variable:
         if solution.get_values(f[0]) > 0 :
             selected.append(f)
-            print ' Facility %s is open' % f[0],'                            ', f
+            print ' Facility %s is open' % f[0]
     print '**********************************************************************'
     print 'Largest Value in dij (M)     = ', M
     print 'Objective Value (D)          = ', solution.get_objective_value()
