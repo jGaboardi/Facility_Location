@@ -12,9 +12,9 @@ Adapted from:
     M. J. Kuby. 
     1988. 
     Programming models for facility dispersion: the p-dispersion 
-        and maxisum dispersion problems. 
-    Computers, Environment and Urban Systems. 
-    36 (4):331–341.
+            and maxisum dispersion problems. 
+    Mathematical and Computer Modelling. 
+    10 (4):316-329.
 '''
 
 # Maximizing the minimum distance bewteen facilities (generally noxious)
@@ -24,10 +24,7 @@ Adapted from:
 #   *   The objective of the p-Dispersion Facility Location Problem is to 
 #        maximize the minimum distance bewteen facilities (generally noxious).
 
-#   *   [i] - a specific origin
-#   *   [j] - a specifc destination
-#   *   [n] - the set of origins
-#   *   [m] - the set of destinations
+#   *   [i][j] - matrix dimensions
 #   *   [dij] - matrix of travel costs between nodes
 #   *   [M] - largest value in dij
 #   *   [D] - Maximized minimum distance between facilities
@@ -58,7 +55,7 @@ def CplexPDisp(dij, p_facilities, total_facilities):
     # Max Value in dij
     M = np.amax(dij)
     
-    #     3. Add Variables        
+    #  Add Variables        
     fac_var = []
     for dest in service_nodes:
         fac_var.append([])
