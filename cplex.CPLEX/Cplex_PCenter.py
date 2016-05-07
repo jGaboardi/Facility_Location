@@ -3,12 +3,12 @@
 import cplex as cp
 import numpy as np
 import time
-#import pulp
+
 t1 = time.time()
 
-#P_Center = pulp.LpProblem("P-Center Problem", pulp.LpMinimize)
 
-#m = pulp.cplex.Cplex()
+
+
 m = cp.Cplex()                                      # Create model
 m.parameters.emphasis.mip.set(2)                    # Set MIP emphasis to '2' --> Optimal
 m.set_problem_type(m.problem_type.LP)               # Set problem type
