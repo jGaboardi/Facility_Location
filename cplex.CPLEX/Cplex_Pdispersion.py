@@ -51,10 +51,10 @@ def CplexPDisp(dij, p_facilities, total_facilities):
     M = np.amax(dij)
     
     #  Add Variables        
-    fac_var = []
+    facility_variable = []
     for dest in service_nodes:
-        fac_var.append([])
-        fac_var[dest].append('y' + str(dest+1))
+        facility_variable.append([])
+        facility_variable[dest].append('y' + str(dest+1))
     
     # Add Maximized Minimum Variable
     D = 'D'
@@ -71,7 +71,7 @@ def CplexPDisp(dij, p_facilities, total_facilities):
                         types = ['B'] * total_facilities)
     
     # Add Facility Constraint
-    facility_constraint = cp.SparsePair(ind = [fac_var[j][0] for j in service_nodes], 
+    facility_constraint = cp.SparsePair(ind = [facility_variable[j][0] for j in service_nodes], 
                                     val = [1.0] * total_facilities)
     m.linear_constraints.add(lin_expr = [facility_constraint],
                                 senses = ['E'],
@@ -82,7 +82,8 @@ def CplexPDisp(dij, p_facilities, total_facilities):
     for orig in service_nodes:
         for dest in service_nodes:
             if dest > orig:
-                ind_val_rhs[0].append([fac_var[orig][0]] + [fac_var[dest][0]] + [D])
+                ind_val_rhs[0].append([facility_variable[orig][0]] + 
+                                      [facility_variable[dest][0]] + [D])
                 ind_val_rhs[1].append([-M] + [-M] + [-1.0])
                 ind_val_rhs[2].append(-2*M - dij[orig][dest])
             else:
@@ -103,7 +104,7 @@ def CplexPDisp(dij, p_facilities, total_facilities):
         
     print '\n**********************************************************************'
     selected = []
-    for f in fac_var:
+    for f in facility_variable:
         if solution.get_values(f[0]) > 0 :
             selected.append(f)
             print ' Facility %s is open' % f[0],'                            ', f
@@ -112,7 +113,8 @@ def CplexPDisp(dij, p_facilities, total_facilities):
     print 'Objective Value (D)          = ', solution.get_objective_value()
     print 'Matrix Dimensions            = ', dij.shape
     print 'Real Time to Solve (minutes) = ', t2
-    print 'Solution status              = ' , solution.get_status(), ':', solution.status[solution.get_status()]
+    print 'Solution status              = ' , solution.get_status(), ':', \
+                                              solution.status[solution.get_status()]
     print '****************************'
     print '    -- The p-Dispersion Problem CPLEX -- '
     print '\n    -- James Gaboardi, 2016 -- '
