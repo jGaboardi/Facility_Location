@@ -3,9 +3,9 @@
 import cplex as cp
 import numpy as np
 import time
+np.random.seed(352)
 
-
-
+def CplexPCenter(Cij):
     t1 = time.time()
 
     m = cp.Cplex()                                      # Create model
@@ -13,11 +13,9 @@ import time
     m.set_problem_type(m.problem_type.LP)               # Set problem type
     m.objective.set_sense(m.objective.sense.minimize)   # Objective Function Sense  ==>  Minimize
 
-    np.random.seed(352)
+    
 
     # Cost Matrix
-    Cij = np.random.uniform(1, 10, 9)
-    Cij = Cij.reshape(3,3)
     client_nodes = range(len(Cij))
     service_nodes = range(len(Cij[0]))
     all_nodes_len = len(Cij) * len(Cij[0])
@@ -90,8 +88,6 @@ import time
                                     senses = ['L'], 
                                     rhs = [0]);
 
-
-
     # Optimize
     m.solve()
     m.write('/Users/jgaboardi/Desktop/pathCENTER.lp')
@@ -110,3 +106,10 @@ import time
     print 'Matrix Size        = ', Cij.shape
     print '****************************'
     print '\n-----\nJames Gaboardi, 2016'
+########################################################   
+
+ # Cost Matrix
+Cost_Matrix = np.random.uniform(1, 10, 9)
+Cost_Matrix = Cost_Matrix.reshape(3,3)
+
+CplexPCenter(Cij=Cost_Matrix)
