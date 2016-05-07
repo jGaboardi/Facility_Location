@@ -78,7 +78,7 @@ def CplexPDisp(dij, p_facilities, total_facilities):
                                 senses = ['E'],
                                 rhs = [p_facilities])
     
-    # Add Inter-Facility Distance Constraints   ==> n(n-1)/2
+    # Add Inter-Facility Distance Constraints ==> n(n-1)/2
     index_value_rhs = [[],[],[]]
     for orig in service_nodes:
         for dest in service_nodes:

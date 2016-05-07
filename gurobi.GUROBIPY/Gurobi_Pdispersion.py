@@ -27,7 +27,7 @@ Adapted from:
 #   *   [D] - Maximized minimum distance between facilities
 #   *	[yi] - each service facility
 #   *   [p] - the number of facilities to be sited
-
+##########################################################################################
 
 
 # Imports
@@ -40,29 +40,26 @@ def GbpPDisp(dij, p_facilities, total_facilities):
     
     t1 = time.time()
     
-    service_nodes = range(len(dij))
-    # Max Value in dij
-    M = np.amax(dij)
+    facility_range = range(total_facilities)     # 
+    M = np.amax(dij)                            # Max Value in dij
     
-    #     2. Create Model, Set MIP Focus, Add Variables, & Update Model
+    # Create Model, Set MIP Focus, Add Variables, & Update Model
     mPDP = gbp.Model(" -- p-Dispersion -- ")
-    # Set MIP Focus to 2 for optimality
-    gbp.setParam('MIPFocus', 2)
+    gbp.setParam('MIPFocus', 2)  # Set MIP Focus to 2 for optimality
     
     #     3. Add Variables
     # Add Decision Variables
     facility_variable = []
-    for dest in service_nodes:
+    for destination in facility_range:
         facility_variable.append(mPDP.addVar(vtype=gbp.GRB.BINARY,
-                                    lb = 0,
-                                    ub = 1,
-                                    name='y'+str(dest+1)))
+                                                lb=0,
+                                                ub=1,
+                                                name='y'+str(dest+1)))
     # Add Maximized Minimum Variable
     D = mPDP.addVar(vtype=gbp.GRB.CONTINUOUS,
-                                    lb = 0,
-                                    ub = gbp.GRB.INFINITY,
+                                    lb=0,
+                                    ub=gbp.GRB.INFINITY,
                                     name='D')
-    
     # Update Model Variables
     mPDP.update()       
     
@@ -70,23 +67,23 @@ def GbpPDisp(dij, p_facilities, total_facilities):
     mPDP.setObjective(D, gbp.GRB.MAXIMIZE)
     
     #     5. Add Constriants
-    # Add Facility Constraint  [p=2]
-    mPDP.addConstr(gbp.quicksum(facility_variable[dest] for dest in service_nodes) \
-                                                                  == p_facilities)                        
+    # Add Facility Constraint
+    mPDP.addConstr(gbp.quicksum(facility_variable[destination]                         \
+                                                    for destination in facility_range) \
+                                                    == p_facilities)                        
     
-    # Add Inter-Facility Distance Constraints   n(n-1)/2
-    for orig in service_nodes:
-        for dest in service_nodes:
-            if dest > orig:
+    # Add Inter-Facility Distance Constraints ==> n(n-1)/2
+    for origin in facility_range:
+        for destination in facility_range:
+            if destination > origin:
                 mPDP.addConstr(
-                                dij[orig][dest] +           \
-                                M*2                         \
-                                -M*facility_variable[orig]  \
-                                -M*facility_variable[dest]  \
+                                dij[origin][destination] +           \
+                                M*2                                  \
+                                -M*facility_variable[origin]         \
+                                -M*facility_variable[destination]    \
                                 -D >= 0)
             else:
                 pass
-    
    
     #     6. Optimize and Print Results
     mPDP.optimize()
@@ -110,7 +107,7 @@ def GbpPDisp(dij, p_facilities, total_facilities):
     print '**********************************************************************'
     print '    -- The p-Dispersion Problem Gurobi -- '
     print '\n    -- James Gaboardi, 2016 -- '
-###################################################
+##########################################################################################
 # Data can be read-in or simulated
 
 #  Total Number of Facilities  
