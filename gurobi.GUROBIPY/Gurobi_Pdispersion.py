@@ -43,30 +43,27 @@ def Gurobi_pDispersion(dij, p_facilities, total_facilities):
     facility_range = range(total_facilities)     # range of total facilities
     M = np.amax(dij)                             # Max Value in dij
     
-    # Create Model, Set MIP Focus, Add Variables, & Update Model
-    mPDP = gbp.Model(" -- p-Dispersion -- ")
-    gbp.setParam('MIPFocus', 2)  # Set MIP Focus to 2 for optimality
+    mPDP = gbp.Model(" -- p-Dispersion -- ")    # Instantiate a model
+    gbp.setParam('MIPFocus', 2)                 # Set MIP Focus to 2 for optimality
     
-    #     3. Add Variables
     # Add Decision Variables
     facility_variable = []
     for destination in facility_range:
         facility_variable.append(mPDP.addVar(vtype=gbp.GRB.BINARY,
                                                 lb=0,
                                                 ub=1,
-                                                name='y'+str(destination+1)))
+                                              name='y'+str(destination+1)))
     # Add Maximized Minimum Variable
     D = mPDP.addVar(vtype=gbp.GRB.CONTINUOUS,
-                                    lb=0,
-                                    ub=gbp.GRB.INFINITY,
-                                    name='D')
+                       lb=0,
+                       ub=gbp.GRB.INFINITY,
+                     name='D')
     # Update Model Variables
     mPDP.update()       
     
-    #     4. Set Objective Function
+    #  Set Objective Function
     mPDP.setObjective(D, gbp.GRB.MAXIMIZE)
     
-    #     5. Add Constriants
     # Add Facility Constraint
     mPDP.addConstr(gbp.quicksum(facility_variable[destination]                         \
                                                     for destination in facility_range) \
@@ -77,15 +74,15 @@ def Gurobi_pDispersion(dij, p_facilities, total_facilities):
         for destination in facility_range:
             if destination > origin:
                 mPDP.addConstr(
-                                dij[origin][destination] +           \
-                                M*2                                  \
-                                -M*facility_variable[origin]         \
-                                -M*facility_variable[destination]    \
+                                dij[origin][destination]               \
+                                + M * 2                                \
+                                - M * facility_variable[origin]        \
+                                - M * facility_variable[destination]   \
                                 >= D)
             else:
                 pass
     
-    #     6. Optimize and Print Results
+    #  Optimize and Print Results
     mPDP.optimize()
     mPDP.write('path.lp')
     t2 = round(round(time.time()-t1, 3)/60, 5)
@@ -126,7 +123,6 @@ Gurobi_pDispersion(
                     dij=Cost_Matrix, 
                     p_facilities=P, 
                     total_facilities=Service)
-
 '''
 James Gaboardi, 2015
 '''

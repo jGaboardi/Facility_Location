@@ -35,11 +35,11 @@ import cplex as cp
 import time
 np.random.seed(352)
 
-def CplexPDisp(dij, p_facilities, total_facilities):
+def Cplex_pDispersion(dij, p_facilities, total_facilities):
     
     t1 = time.time()
     
-    m = cp.Cplex()                                      # Create model
+    m = cp.Cplex()                                      # Instantiate a model
     m.parameters.emphasis.mip.set(2)                    # Set MIP emphasis to Optimal
     m.set_problem_type(m.problem_type.LP)               # Set problem type
     m.objective.set_sense(m.objective.sense.maximize)   # Objective Function ==>  Maximize
@@ -58,52 +58,51 @@ def CplexPDisp(dij, p_facilities, total_facilities):
     
     # Add Maximized Minimum Variable
     D = 'D'
-    m.variables.add(names = D,
-                        obj = [1],
-                        lb = [0],
-                        ub = [cp.infinity],
-                        types = ['C'])
+    m.variables.add(names=D,
+                      obj=[1],
+                       lb=[0],
+                       ub=[cp.infinity],
+                    types=['C'])
     
     # Add Facility Decision Variables
-    m.variables.add(names = [facility_variable[j][0] for j in service_nodes],
-                        lb = [0] * total_facilities, 
-                        ub = [1] * total_facilities, 
-                        types = ['B'] * total_facilities)
+    m.variables.add(names=[facility_variable[j][0] for j in service_nodes],
+                       lb=[0]*total_facilities, 
+                       ub=[1]*total_facilities, 
+                    types=['B']*total_facilities)
     
     # Add Facility Constraint
-    facility_constraint = cp.SparsePair(ind = [facility_variable[j][0] 
+    facility_constraint = cp.SparsePair(ind=[facility_variable[j][0] 
                                                                 for j in service_nodes], 
-                                        val = [1.0] * total_facilities)
-    m.linear_constraints.add(lin_expr = [facility_constraint],
-                                senses = ['E'],
-                                rhs = [p_facilities])
+                                        val=[1.0] * total_facilities)
+    m.linear_constraints.add(lin_expr=[facility_constraint],
+                               senses=['E'],
+                                  rhs=[p_facilities])
     
     # Add Inter-Facility Distance Constraints ==> n(n-1)/2
     index_value_rhs = [[],[],[]]
     for orig in service_nodes:
         for dest in service_nodes:
             if dest > orig:
-                index_value_rhs[0].append([facility_variable[orig][0]] + 
-                                          [facility_variable[dest][0]] + [D])
-                index_value_rhs[1].append([-M] + [-M] + [-1.0])
-                index_value_rhs[2].append(-2*M - dij[orig][dest])
+                        index_value_rhs[0].append([facility_variable[orig][0]]+        \
+                                                  [facility_variable[dest][0]]+[D])
+                        index_value_rhs[1].append([-M]+[-M]+[-1.0])
+                        index_value_rhs[2].append(-2*M-dij[orig][dest])
             else:
                 pass
 
     number_of_constraints = range(len(index_value_rhs[0]))
     for record in number_of_constraints:
-        inter_facility_constraints = index_value_rhs[0][record], \
+        inter_facility_constraints = index_value_rhs[0][record],                       \
                                      index_value_rhs[1][record]
-        m.linear_constraints.add(lin_expr = [inter_facility_constraints],                 
-                                senses = ['G'], 
-                                rhs = [index_value_rhs[2][record]])
+        m.linear_constraints.add(lin_expr=[inter_facility_constraints],                 
+                                   senses=['G'], 
+                                      rhs=[index_value_rhs[2][record]])
 
     # Optimize and Print Results
     m.write('path.lp')
     m.solve()
     solution = m.solution
     t2 = round(round(time.time()-t1, 3)/60, 5)
-        
     print '\n**********************************************************************'
     selected = []
     for f in facility_variable:
@@ -137,12 +136,10 @@ Cost_Matrix = np.random.randint(3,
 Cost_Matrix = Cost_Matrix.reshape(matrix_vector,matrix_vector)
 
 # Call Function   
-CplexPDisp(
-            dij=Cost_Matrix, 
-            p_facilities=P, 
-            total_facilities=Service)
-
-
+Cplex_pDispersion(
+                dij=Cost_Matrix, 
+                p_facilities=P, 
+                total_facilities=Service)
 '''
 James Gaboardi, 2016
 '''
