@@ -27,7 +27,7 @@ Adapted from:
 #   *   [D] - Maximized minimum distance between facilities
 #   *	[yi] - each service facility
 #   *   [p] - the number of facilities to be sited
-
+##########################################################################################
 
 # Imports
 import numpy as np
@@ -71,32 +71,34 @@ def CplexPDisp(dij, p_facilities, total_facilities):
                         types = ['B'] * total_facilities)
     
     # Add Facility Constraint
-    facility_constraint = cp.SparsePair(ind = [facility_variable[j][0] for j in service_nodes], 
+    facility_constraint = cp.SparsePair(ind = [facility_variable[j][0] 
+                                                                for j in service_nodes], 
                                     val = [1.0] * total_facilities)
     m.linear_constraints.add(lin_expr = [facility_constraint],
                                 senses = ['E'],
                                 rhs = [p_facilities])
     
     # Add Inter-Facility Distance Constraints   n(n-1)/2
-    ind_val_rhs = [[],[],[]]
+    index_value_rhs = [[],[],[]]
     for orig in service_nodes:
         for dest in service_nodes:
             if dest > orig:
-                ind_val_rhs[0].append([facility_variable[orig][0]] + 
-                                      [facility_variable[dest][0]] + [D])
-                ind_val_rhs[1].append([-M] + [-M] + [-1.0])
-                ind_val_rhs[2].append(-2*M - dij[orig][dest])
+                index_value_rhs[0].append([facility_variable[orig][0]] + 
+                                          [facility_variable[dest][0]] + [D])
+                index_value_rhs[1].append([-M] + [-M] + [-1.0])
+                index_value_rhs[2].append(-2*M - dij[orig][dest])
             else:
                 pass
 
-    for i in range(len(ind_val_rhs[0])):
-        inter_facility_constraints = ind_val_rhs[0][i], ind_val_rhs[1][i]
+    _n(n-_1)/2_ = range(len(index_value_rhs[0]))
+    for record in _n(n-_1)/2_ :
+        inter_facility_constraints = index_value_rhs[0][record], 
+                                     index_value_rhs[1][record]
         m.linear_constraints.add(lin_expr = [inter_facility_constraints],                 
                                 senses = ['G'], 
-                                rhs = [ind_val_rhs[2][i]])
+                                rhs = [index_value_rhs[2][record]])
 
-    #     6. Optimize and Print Results
-    
+    # Optimize and Print Results
     m.write('path.lp')
     m.solve()
     solution = m.solution
@@ -111,14 +113,15 @@ def CplexPDisp(dij, p_facilities, total_facilities):
     print '**********************************************************************'
     print 'Largest Value in dij (M)     = ', M
     print 'Objective Value (D)          = ', solution.get_objective_value()
+    print 'Candidate Facilities         = ', p_facilities
     print 'Matrix Dimensions            = ', dij.shape
     print 'Real Time to Solve (minutes) = ', t2
-    print 'Solution status              = ' , solution.get_status(), ':', \
+    print 'Solution status              = ', solution.get_status(), ':', \
                                               solution.status[solution.get_status()]
     print '****************************'
     print '    -- The p-Dispersion Problem CPLEX -- '
     print '\n    -- James Gaboardi, 2016 -- '
-##########################################################################
+##########################################################################################
 # Data can be read-in or simulated
 
 #  Total Number of Facilities  
