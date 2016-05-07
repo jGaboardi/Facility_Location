@@ -86,7 +86,7 @@ def CplexPCenter(Cij):
         max_constraints = [MC[0][i], MC[1][i]]                            
         m.linear_constraints.add(lin_expr = [max_constraints],                 
                                     senses = ['L'], 
-                                    rhs = [0]);
+                                    rhs = [0])
 
     # Optimize
     m.solve()
