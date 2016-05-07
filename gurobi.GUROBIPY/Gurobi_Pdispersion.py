@@ -81,10 +81,10 @@ def GbpPDisp(dij, p_facilities, total_facilities):
                                 M*2                                  \
                                 -M*facility_variable[origin]         \
                                 -M*facility_variable[destination]    \
-                                -D >= 0)
+                                >= D)
             else:
                 pass
-   
+    
     #     6. Optimize and Print Results
     mPDP.optimize()
     mPDP.write('path.lp')
@@ -111,7 +111,7 @@ def GbpPDisp(dij, p_facilities, total_facilities):
 # Data can be read-in or simulated
 
 #  Total Number of Facilities  
-Service = matrix_vector = 5       # matrix_vector * matrix_vector for total facilities
+Service = matrix_vector = 200       # matrix_vector * matrix_vector for total facilities
 
 P = candidate_facilities = 2
 
