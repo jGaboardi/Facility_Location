@@ -46,8 +46,8 @@ def CplexPDisp(dij, p_facilities, total_facilities):
 
     # Service Nodes
     service_nodes = range(total_facilities)
-    all_nodes_len = total_facilities * total_facilities
-    ALL_nodes_range = range(all_nodes_len)
+    all_nodes_length = total_facilities * total_facilities
+    ALL_nodes_range = range(all_nodes_length)
     
     # Max Value in dij
     M = np.amax(dij)
@@ -91,7 +91,6 @@ def CplexPDisp(dij, p_facilities, total_facilities):
                 pass
 
     for i in range(len(ind_val_rhs[0])):
-        #print i
         inter_facility_constraints = ind_val_rhs[0][i], ind_val_rhs[1][i]
         m.linear_constraints.add(lin_expr = [inter_facility_constraints],                 
                                 senses = ['G'], 
@@ -99,7 +98,7 @@ def CplexPDisp(dij, p_facilities, total_facilities):
 
     #     6. Optimize and Print Results
     
-    m.write('/Users/jgaboardi/Desktop/pathCPLEX.lp')
+    m.write('path.lp')
     m.solve()
     solution = m.solution
     t2 = round(time.time()-t1, 3)/60
