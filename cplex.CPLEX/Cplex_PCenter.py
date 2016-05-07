@@ -70,7 +70,6 @@ def CplexPCenter(Cij, p):
     # Add Opening Constraint
     OC = [[client_variable[i][j]] + [facility_variable[j][0]] for i in client_nodes for j in service_nodes]
     for oc in OC:
-        #print oc
         opening_constraints = cp.SparsePair(ind = oc, val = [-1.0, 1.0])
         m.linear_constraints.add(lin_expr = [opening_constraints], 
                                     senses = ['G'], 
