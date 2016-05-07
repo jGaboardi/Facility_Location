@@ -28,10 +28,10 @@ def CplexPCenter(Cij):
             client_variable.append([])
             for dest in service_nodes:
                 client_variable[orig].append('x'+str(orig+1)+'_'+str(dest+1))
-    fac_var = []
+    facility_variable = []
     for dest in service_nodes:
-            fac_var.append([])
-            fac_var[dest].append('y' + str(dest+1))
+            facility_variable.append([])
+            facility_variable[dest].append('y' + str(dest+1))
 
 
     # Add Maximized Minimized Average Time Variable
@@ -46,7 +46,7 @@ def CplexPCenter(Cij):
                             ub = [1] * all_nodes_len, 
                             types = ['B'] * all_nodes_len)
     # Add Service Decision Variable
-    m.variables.add(names = [fac_var[j][0] for j in service_nodes],
+    m.variables.add(names = [facility_variable[j][0] for j in service_nodes],
                             lb = [0] * len(Cij[0]), 
                             ub = [1] * len(Cij[0]), 
                             types = ['B'] * len(Cij[0]))
@@ -62,13 +62,13 @@ def CplexPCenter(Cij):
                                     senses = ['E'], 
                                     rhs = [1]);
     # Add Facility Constraint
-    facility_constraint = cp.SparsePair(ind = [fac_var[j][0] for j in service_nodes], 
+    facility_constraint = cp.SparsePair(ind = [facility_variable[j][0] for j in service_nodes], 
                                         val = [1.0] * len(Cij[0]))
     m.linear_constraints.add(lin_expr = [facility_constraint],
                                     senses = ['E'],
                                     rhs = [1])
     # Add Opening Constraint
-    OC = [[client_variable[i][j]] + [fac_var[j][0]] for i in client_nodes for j in service_nodes]
+    OC = [[client_variable[i][j]] + [facility_variable[j][0]] for i in client_nodes for j in service_nodes]
     for oc in OC:
         #print oc
         opening_constraints = cp.SparsePair(ind = oc, val = [-1.0, 1.0])
@@ -94,9 +94,9 @@ def CplexPCenter(Cij):
 
     # Display solution.
     print '****************************'
-    for f in fac_var:
-        if solution.get_values(f[0]) > 0 :
-            print 'Facility %s is open' % f[0]
+    for each_facility in facility_variable:
+        if solution.get_values(each_facility[0]) > 0 :
+            print 'Facility %s is open' % each_facility[0]
     print 'Solution status    = ' , solution.get_status(), ':', solution.status[solution.get_status()]
     print 'Total cost         = ' , solution.get_objective_value()
     print 'Determination Time = ', m.get_dettime(), 'ticks'
