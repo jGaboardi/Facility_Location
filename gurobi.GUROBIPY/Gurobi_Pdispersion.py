@@ -51,9 +51,9 @@ def GbpPDisp(dij, p_facilities, total_facilities):
     
     #     3. Add Variables
     # Add Decision Variables
-    serv_var = []
+    facility_variable = []
     for dest in service_nodes:
-        serv_var.append(mPDP.addVar(vtype=gbp.GRB.BINARY,
+        facility_variable.append(mPDP.addVar(vtype=gbp.GRB.BINARY,
                                     lb = 0,
                                     ub = 1,
                                     name='y'+str(dest+1)))
@@ -71,14 +71,19 @@ def GbpPDisp(dij, p_facilities, total_facilities):
     
     #     5. Add Constriants
     # Add Facility Constraint  [p=2]
-    mPDP.addConstr(gbp.quicksum(serv_var[dest] for dest in service_nodes) == p_facilities)                        
+    mPDP.addConstr(gbp.quicksum(facility_variable[dest] for dest in service_nodes) \
+                                                                  == p_facilities)                        
     
     # Add Inter-Facility Distance Constraints   n(n-1)/2
     for orig in service_nodes:
         for dest in service_nodes:
             if dest > orig:
                 mPDP.addConstr(
-                dij[orig][dest] + M*2 -M*serv_var[orig] -M*serv_var[dest] -D >= 0)
+                                dij[orig][dest] +           \
+                                M*2                         \
+                                -M*facility_variable[orig]  \
+                                -M*facility_variable[dest]  \
+                                -D >= 0)
             else:
                 pass
     
@@ -86,18 +91,18 @@ def GbpPDisp(dij, p_facilities, total_facilities):
     #     6. Optimize and Print Results
     mPDP.optimize()
     mPDP.write('path.lp')
-    t2 = round(time.time()-t1, 3)/60
+    t2 = round(round(time.time()-t1, 3)/60, 5)
     print '\n**********************************************************************'
-    selected = []
+    selected_facilities = []
     for v in mPDP.getVars():
         if 'D' in v.VarName:
             pass
         elif v.x > 0:
             var = '%s' % v.VarName
-            selected.append(var)
+            selected_facilities.append(var)
             print '    |                                            ', var
     print '    | Selected Facility Locations -------------  ^^^^ '
-    print '    | Candidate Facilities [p] ---------------- ', len(selected)
+    print '    | Candidate Facilities [p] ---------------- ', len(selected_facilities)
     print '    | Largest Value in dij (M) ---------------- ', M
     print '    | Objective Value (D) --------------------- ', mPDP.objVal
     print '    | Matrix Dimensions ----------------------- ', dij.shape
@@ -109,7 +114,7 @@ def GbpPDisp(dij, p_facilities, total_facilities):
 # Data can be read-in or simulated
 
 #  Total Number of Facilities  
-Service = matrix_vector = 200       # matrix_vector * matrix_vector for total facilities
+Service = matrix_vector = 5       # matrix_vector * matrix_vector for total facilities
 
 P = candidate_facilities = 2
 
