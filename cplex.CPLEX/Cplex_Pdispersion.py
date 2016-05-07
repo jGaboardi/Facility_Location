@@ -118,7 +118,7 @@ def CplexPDisp(dij, p_facilities, total_facilities):
     print 'Real Time to Solve (minutes) = ', t2
     print 'Solution status              = ', solution.get_status(), ':', \
                                               solution.status[solution.get_status()]
-    print '****************************'
+    print '**********************************************************************'
     print '    -- The p-Dispersion Problem CPLEX -- '
     print '    -- James Gaboardi, 2016 -- '
 ##########################################################################################
