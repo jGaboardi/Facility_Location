@@ -73,7 +73,7 @@ def CplexPDisp(dij, p_facilities, total_facilities):
     # Add Facility Constraint
     facility_constraint = cp.SparsePair(ind = [facility_variable[j][0] 
                                                                 for j in service_nodes], 
-                                    val = [1.0] * total_facilities)
+                                        val = [1.0] * total_facilities)
     m.linear_constraints.add(lin_expr = [facility_constraint],
                                 senses = ['E'],
                                 rhs = [p_facilities])
@@ -102,7 +102,7 @@ def CplexPDisp(dij, p_facilities, total_facilities):
     m.write('path.lp')
     m.solve()
     solution = m.solution
-    t2 = round(time.time()-t1, 3)/60
+    t2 = round(round(time.time()-t1, 3)/60, 5)
         
     print '\n**********************************************************************'
     selected = []
