@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 '''
 GNU LESSER GENERAL PUBLIC LICENSE
@@ -6,11 +7,6 @@ GNU LESSER GENERAL PUBLIC LICENSE
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
 '''
-
-# Building and Optimizing a p-Dispersion facility location problem in 
-#        Python/Gurobi[gurobipy]
-#
-
 '''
 Adapted from:   
     Maliszewski, P. J. 
@@ -41,17 +37,16 @@ Adapted from:
 #   *   [p] - the number of facilities to be sited
 
 
-#    1. Imports and Data Creation
 # Imports
 import numpy as np
 import gurobipy as gbp
-import datetime as dt
+import time
+np.random.seed(352)
 
-def GbpPDisp():
-    # Distance Matrix 
-    dij = np.random.randint(10, 50, 16)
-    dij = dij.reshape(4,4)
-    # Service Nodes
+def GbpPDisp(dij, p_facilities, total_facilities):
+    
+    t1 = time.time()
+    
     service_nodes = range(len(dij))
     # Max Value in dij
     M = np.amax(dij)
@@ -66,11 +61,15 @@ def GbpPDisp():
     serv_var = []
     for dest in service_nodes:
         serv_var.append(mPDP.addVar(vtype=gbp.GRB.BINARY,
+                                    lb = 0,
                                     ub = 1,
                                     name='y'+str(dest+1)))
     # Add Maximized Minimum Variable
     D = mPDP.addVar(vtype=gbp.GRB.CONTINUOUS,
-                name='D')
+                                    lb = 0,
+                                    ub = gbp.GRB.INFINITY,
+                                    name='D')
+    
     # Update Model Variables
     mPDP.update()       
     
@@ -79,29 +78,22 @@ def GbpPDisp():
     
     #     5. Add Constriants
     # Add Facility Constraint  [p=2]
-    mPDP.addConstr(gbp.quicksum(serv_var[dest] for dest in service_nodes) == 2,
-                        'Facility_Constraint')                        
+    mPDP.addConstr(gbp.quicksum(serv_var[dest] for dest in service_nodes) == p_facilities)                        
+    
     # Add Inter-Facility Distance Constraints   n(n-1)/2
-    counter=0
     for orig in service_nodes:
         for dest in service_nodes:
             if dest > orig:
-                counter = counter+1
                 mPDP.addConstr(
-                dij[orig][dest]+M*2-M*serv_var[orig]-M*serv_var[dest]-D>=0,
-                        'Inter-Fac_Dist_Constraint_%i' % counter)
+                dij[orig][dest] + M*2 -M*serv_var[orig] -M*serv_var[dest] -D >= 0)
             else:
                 pass
     
+   
     #     6. Optimize and Print Results
-    try: 
-        mPDP.optimize()
-    except Exception as e:
-        print '   ################################################################'
-        print ' < ISSUE : ', e, ' >'
-        print '   ################################################################'
-    
+    mPDP.optimize()
     mPDP.write('path.lp')
+    t2 = round(time.time()-t1, 3)/60
     print '\n**********************************************************************'
     selected = []
     for v in mPDP.getVars():
@@ -116,14 +108,30 @@ def GbpPDisp():
     print '    | Largest Value in dij (M) ---------------- ', M
     print '    | Objective Value (D) --------------------- ', mPDP.objVal
     print '    | Matrix Dimensions ----------------------- ', dij.shape
-    print '    | Date/Time ------------------------------- ', dt.datetime.now()
+    print '    | Real Time to Solve (minutes)------------- ', t2
     print '**********************************************************************'
-    print '    -- The p-Dispersion Problem -- '
+    print '    -- The p-Dispersion Problem Gurobi -- '
+    print '\n    -- James Gaboardi, 2016 -- '
+###################################################
+# Data can be read-in or simulated
 
-try:
-    GbpPDisp()
-    print '\nJames Gaboardi, 2015'
-except Exception as e:
-        print '   ################################################################'
-        print ' < ISSUE : ', e, ' >'
-        print '   ################################################################'
+#  Total Number of Facilities  
+Service = matrix_vector = 200       # matrix_vector * matrix_vector for total facilities
+
+P = candidate_facilities = 2
+
+# Cost Matrix
+Cost_Matrix = np.random.randint(3, 
+                                50, 
+                                matrix_vector*matrix_vector)
+Cost_Matrix = Cost_Matrix.reshape(matrix_vector,matrix_vector)
+
+# Call Function   
+GbpPDisp(
+        dij=Cost_Matrix, 
+        p_facilities=P, 
+        total_facilities=Service)
+
+'''
+James Gaboardi, 2015
+'''
