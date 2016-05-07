@@ -21,9 +21,6 @@ Adapted from:
 
 # Terminology & General Background for Facility Location and Summation Notation:
 
-#   *   The objective of the p-Dispersion Facility Location Problem is to 
-#        maximize the minimum distance bewteen facilities (generally noxious).
-
 #   *   [i][j] - matrix dimensions
 #   *   [dij] - matrix of travel costs between nodes
 #   *   [M] - largest value in dij
