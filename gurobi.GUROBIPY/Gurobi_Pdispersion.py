@@ -9,14 +9,12 @@ GNU LESSER GENERAL PUBLIC LICENSE
 '''
 '''
 Adapted from:   
-    Maliszewski, P. J. 
-    M. J. Kuby
-    and M. W. Horner 
-    2012. 
-    A comparison of multi-objective spatial dispersion models for managing 
-        critical assets in urban areas. 
-    Computers, Environment and Urban Systems. 
-    36 (4):331–341.
+    M. J. Kuby. 
+    1988. 
+    Programming models for facility dispersion: the p-dispersion 
+            and maxisum dispersion problems. 
+    Mathematical and Computer Modelling. 
+    10 (4):316-329.
 '''
 
 # Maximizing the minimum distance bewteen facilities (generally noxious)
@@ -26,15 +24,13 @@ Adapted from:
 #   *   The objective of the p-Dispersion Facility Location Problem is to 
 #        maximize the minimum distance bewteen facilities (generally noxious).
 
-#   *   [i] - a specific origin
-#   *   [j] - a specifc destination
-#   *   [n] - the set of origins
-#   *   [m] - the set of destinations
+#   *   [i][j] - matrix dimensions
 #   *   [dij] - matrix of travel costs between nodes
 #   *   [M] - largest value in dij
 #   *   [D] - Maximized minimum distance between facilities
 #   *	[yi] - each service facility
 #   *   [p] - the number of facilities to be sited
+
 
 
 # Imports
