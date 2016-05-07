@@ -36,12 +36,12 @@ import gurobipy as gbp
 import time
 np.random.seed(352)
 
-def GbpPDisp(dij, p_facilities, total_facilities):
+def Gurobi_pDispersion(dij, p_facilities, total_facilities):
     
     t1 = time.time()
     
-    facility_range = range(total_facilities)     # 
-    M = np.amax(dij)                            # Max Value in dij
+    facility_range = range(total_facilities)     # range of total facilities
+    M = np.amax(dij)                             # Max Value in dij
     
     # Create Model, Set MIP Focus, Add Variables, & Update Model
     mPDP = gbp.Model(" -- p-Dispersion -- ")
@@ -122,10 +122,10 @@ Cost_Matrix = np.random.randint(3,
 Cost_Matrix = Cost_Matrix.reshape(matrix_vector,matrix_vector)
 
 # Call Function   
-GbpPDisp(
-        dij=Cost_Matrix, 
-        p_facilities=P, 
-        total_facilities=Service)
+Gurobi_pDispersion(
+                    dij=Cost_Matrix, 
+                    p_facilities=P, 
+                    total_facilities=Service)
 
 '''
 James Gaboardi, 2015
