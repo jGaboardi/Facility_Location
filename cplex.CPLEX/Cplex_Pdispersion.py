@@ -40,14 +40,12 @@ def CplexPDisp(dij, p_facilities, total_facilities):
     t1 = time.time()
     
     m = cp.Cplex()                                      # Create model
-    m.parameters.emphasis.mip.set(2)                    # Set MIP emphasis to '2' --> Optimal
+    m.parameters.emphasis.mip.set(2)                    # Set MIP emphasis to Optimal
     m.set_problem_type(m.problem_type.LP)               # Set problem type
-    m.objective.set_sense(m.objective.sense.maximize)   # Objective Function Sense  ==>  Maximize
+    m.objective.set_sense(m.objective.sense.maximize)   # Objective Function ==>  Maximize
 
     # Service Nodes
     service_nodes = range(total_facilities)
-    all_nodes_length = total_facilities * total_facilities
-    ALL_nodes_range = range(all_nodes_length)
     
     # Max Value in dij
     M = np.amax(dij)
