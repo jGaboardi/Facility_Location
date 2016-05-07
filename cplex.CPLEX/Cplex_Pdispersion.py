@@ -65,7 +65,7 @@ def CplexPDisp(dij, p_facilities, total_facilities):
                         types = ['C'])
     
     # Add Facility Decision Variables
-    m.variables.add(names = [fac_var[j][0] for j in service_nodes],
+    m.variables.add(names = [facility_variable[j][0] for j in service_nodes],
                         lb = [0] * total_facilities, 
                         ub = [1] * total_facilities, 
                         types = ['B'] * total_facilities)
@@ -78,7 +78,7 @@ def CplexPDisp(dij, p_facilities, total_facilities):
                                 senses = ['E'],
                                 rhs = [p_facilities])
     
-    # Add Inter-Facility Distance Constraints   n(n-1)/2
+    # Add Inter-Facility Distance Constraints   ==> n(n-1)/2
     index_value_rhs = [[],[],[]]
     for orig in service_nodes:
         for dest in service_nodes:
@@ -90,9 +90,9 @@ def CplexPDisp(dij, p_facilities, total_facilities):
             else:
                 pass
 
-    _n(n-_1)/2_ = range(len(index_value_rhs[0]))
-    for record in _n(n-_1)/2_ :
-        inter_facility_constraints = index_value_rhs[0][record], 
+    number_of_constraints = range(len(index_value_rhs[0]))
+    for record in number_of_constraints:
+        inter_facility_constraints = index_value_rhs[0][record], \
                                      index_value_rhs[1][record]
         m.linear_constraints.add(lin_expr = [inter_facility_constraints],                 
                                 senses = ['G'], 
@@ -120,12 +120,12 @@ def CplexPDisp(dij, p_facilities, total_facilities):
                                               solution.status[solution.get_status()]
     print '****************************'
     print '    -- The p-Dispersion Problem CPLEX -- '
-    print '\n    -- James Gaboardi, 2016 -- '
+    print '    -- James Gaboardi, 2016 -- '
 ##########################################################################################
 # Data can be read-in or simulated
 
 #  Total Number of Facilities  
-Service = matrix_vector = 200       # matrix_vector * matrix_vector for total facilities
+Service = matrix_vector = 5       # matrix_vector * matrix_vector for total facilities
 
 # Candidate Facilities
 P = candidate_facilities = 2
