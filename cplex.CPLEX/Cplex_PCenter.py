@@ -88,7 +88,7 @@ def CplexPCenter(Cij):
                                     
     # Optimize
     m.solve()
-    m.write('/Users/jgaboardi/Desktop/pathCENTER.lp')
+    m.write('path.lp')
     t2 = time.time()-t1
     solution = m.solution
 
