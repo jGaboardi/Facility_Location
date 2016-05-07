@@ -5,7 +5,7 @@ import numpy as np
 import time
 np.random.seed(352)
 
-def CplexPCenter(Cij):
+def CplexPCenter(Cij, p):
     t1 = time.time()
 
     m = cp.Cplex()                                      # Create model
@@ -66,7 +66,7 @@ def CplexPCenter(Cij):
                                         val = [1.0] * len(Cij[0]))
     m.linear_constraints.add(lin_expr = [facility_constraint],
                                     senses = ['E'],
-                                    rhs = [1])
+                                    rhs = [p])
     # Add Opening Constraint
     OC = [[client_variable[i][j]] + [facility_variable[j][0]] for i in client_nodes for j in service_nodes]
     for oc in OC:
@@ -93,21 +93,25 @@ def CplexPCenter(Cij):
     solution = m.solution
 
     # Display solution.
-    print '****************************'
+    print '\n\n****************************************************************'
     for each_facility in facility_variable:
         if solution.get_values(each_facility[0]) > 0 :
             print 'Facility %s is open' % each_facility[0]
-    print 'Solution status    = ' , solution.get_status(), ':', solution.status[solution.get_status()]
-    print 'Total cost         = ' , solution.get_objective_value()
-    print 'Determination Time = ', m.get_dettime(), 'ticks'
-    print 'Real Time          = ', t2/60, 'min.'        
-    print 'Matrix Size        = ', Cij.shape
-    print '****************************'
-    print '\n-----\nJames Gaboardi, 2016'
+    print '****************************************************************'
+    print 'Solution status       = ', solution.get_status(), ':', solution.status[solution.get_status()]
+    print 'Total cost            = ', solution.get_objective_value()
+    print 'Candidate Facilities  = ', p
+    print 'Real Time             = ', t2/60, 'min.'        
+    print 'Matrix Size           = ', Cij.shape
+    print '****************************************************************'
+    print '    -- The p-Center Problem CPLEX -- '
+    print '    --    James Gaboardi, 2016    -- '
 ########################################################   
 
  # Cost Matrix
 Cost_Matrix = np.random.uniform(1, 10, 9)
 Cost_Matrix = Cost_Matrix.reshape(3,3)
 
-CplexPCenter(Cij=Cost_Matrix)
+p_facilities = 1
+
+CplexPCenter(Cij=Cost_Matrix, p=p_facilities)
