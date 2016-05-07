@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
 '''
 GNU LESSER GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
@@ -14,8 +14,7 @@ Adapted from:
     The m-Center Problem. 
     SIAM Review. 
     12:38–39.
-'''
-
+    '''
 
 import cplex as cp
 import numpy as np
@@ -26,9 +25,9 @@ def CplexPCenter(Cij, p):
     t1 = time.time()
 
     m = cp.Cplex()                                      # Create model
-    m.parameters.emphasis.mip.set(2)                    # Set MIP emphasis to '2' --> Optimal
+    m.parameters.emphasis.mip.set(2)                    # Set MIP emphasis to Optimal
     m.set_problem_type(m.problem_type.LP)               # Set problem type
-    m.objective.set_sense(m.objective.sense.minimize)   # Objective Function Sense  ==>  Minimize
+    m.objective.set_sense(m.objective.sense.minimize)   # Objective Function ==>  Minimize
 
     # Cost Matrix
     client_nodes = range(len(Cij))
@@ -56,7 +55,8 @@ def CplexPCenter(Cij, p):
                     ub = [cp.infinity],
                     types = ['C'])
     # Add Client Decision Variables
-    m.variables.add(names = [client_variable[i][j] for i in client_nodes for j in service_nodes], 
+    m.variables.add(names = [client_variable[i][j] for i in client_nodes 
+                                                   for j in service_nodes], 
                             lb = [0] * all_nodes_len, 
                             ub = [1] * all_nodes_len, 
                             types = ['B'] * all_nodes_len)
