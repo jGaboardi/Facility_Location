@@ -124,5 +124,5 @@ Gurobi_pDispersion(
                     p_facilities=P, 
                     total_facilities=Service)
 '''
-James Gaboardi, 2015
+James Gaboardi, 2016
 '''
