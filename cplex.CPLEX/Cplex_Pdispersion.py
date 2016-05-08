@@ -71,9 +71,8 @@ def Cplex_pDispersion(dij, p_facilities, total_facilities):
                     types=['B']*total_facilities)
     
     # Add Facility Constraint
-    facility_constraint = cp.SparsePair(ind=[facility_variable[j][0] 
-                                                                for j in service_nodes], 
-                                        val=[1.0] * total_facilities)
+    facility_constraint = ([facility_variable[j][0] for j in service_nodes], \
+                           [1.0]*total_facilities)
     m.linear_constraints.add(lin_expr=[facility_constraint],
                                senses=['E'],
                                   rhs=[p_facilities])
@@ -89,7 +88,6 @@ def Cplex_pDispersion(dij, p_facilities, total_facilities):
                         index_value_rhs[2].append(-2*M-dij[orig][dest])
             else:
                 pass
-
     number_of_constraints = range(len(index_value_rhs[0]))
     for record in number_of_constraints:
         inter_facility_constraints = index_value_rhs[0][record],                       \
