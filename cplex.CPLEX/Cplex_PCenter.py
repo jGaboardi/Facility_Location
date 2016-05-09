@@ -14,7 +14,7 @@ Adapted from:
     The m-Center Problem. 
     SIAM Review. 
     12:38–39.
-    '''
+'''
 
 import cplex as cp
 import numpy as np
@@ -68,22 +68,24 @@ def CplexPCenter(Cij, p):
 
     # Add Assignment Constraints
     for orig in client_nodes:       
-        assignment_constraints = cp.SparsePair(ind = [client_variable[orig][dest] 
+        assignment_constraints = ([client_variable[orig][dest] 
                                                 for dest in service_nodes],                           
-                                                val = [1] * len(Cij[0]))
+                                                [1] * len(Cij[0]))
         m.linear_constraints.add(lin_expr = [assignment_constraints],                 
                                     senses = ['E'], 
                                     rhs = [1]);
     # Add Facility Constraint
-    facility_constraint = cp.SparsePair(ind = [facility_variable[j][0] for j in service_nodes], 
-                                        val = [1.0] * len(Cij[0]))
+    facility_constraint = ([facility_variable[j][0] for j in service_nodes], 
+                                        [1.0] * len(Cij[0]))
     m.linear_constraints.add(lin_expr = [facility_constraint],
                                     senses = ['E'],
                                     rhs = [p])
     # Add Opening Constraint
-    OC = [[client_variable[i][j]] + [facility_variable[j][0]] for i in client_nodes for j in service_nodes]
+    OC = [[client_variable[i][j]] + [facility_variable[j][0]] 
+                                    for i in client_nodes 
+                                    for j in service_nodes]
     for oc in OC:
-        opening_constraints = cp.SparsePair(ind = oc, val = [-1.0, 1.0])
+        opening_constraints = (oc, [-1.0, 1.0])
         m.linear_constraints.add(lin_expr = [opening_constraints], 
                                     senses = ['G'], 
                                     rhs = [0])
@@ -110,7 +112,8 @@ def CplexPCenter(Cij, p):
         if solution.get_values(each_facility[0]) > 0 :
             print 'Facility %s is open' % each_facility[0]
     print '****************************************************************'
-    print 'Solution status       = ', solution.get_status(), ':', solution.status[solution.get_status()]
+    print 'Solution status       = ', solution.get_status(), ':', \
+                                                    solution.status[solution.get_status()]
     print 'Total cost            = ', solution.get_objective_value()
     print 'Candidate Facilities  = ', p
     print 'Real Time             = ', t2/60, 'min.'        
