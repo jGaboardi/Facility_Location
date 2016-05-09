@@ -28,14 +28,11 @@ def Cplex_SetCover(Cij, S):
     for i in Cij:
         for j in i:
             if j <= S:
-                outtext = 1
+                Aij.append(1)
             else:
-                outtext = 0
-            Aij.append(outtext)
-    rows, cols = Cij.shape
-    
+                Aij.append(0)
     Aij = np.array(Aij)
-    Aij = Aij.reshape(rows,cols)
+    Aij = Aij.reshape(Cij.shape)
 
     # Indices & Variable Names
     nodes_length = len(Cij)
@@ -50,9 +47,7 @@ def Cplex_SetCover(Cij, S):
                             lb = [0] * nodes_length, 
                             ub = [1] * nodes_length, 
                             types = ['B'] * nodes_length)
-
-    
-    #    3. Add Constraints 
+     
     #Add Coverage Constraints
     for orig in nodes_range:       
         coverage_constraints = ([matrix_variable[orig][dest] for dest in nodes_range],                           
@@ -61,29 +56,34 @@ def Cplex_SetCover(Cij, S):
                                     senses = ['G'], 
                                     rhs = [1])
 
-    #    4. Optimize and Print Results
+    #  Optimize and Print Results
     m.solve()
+    t2 = time.time()-t1
     solution = m.solution
-    
 
     print 'Total cost = ' , solution.get_objective_value()
     print 'Determination Time = ', m.get_dettime(), 'ticks'
     print 'Real Time to Optimize (sec.): *', time.time()-t1
-    print '*********************************************'
+    print '*******************************************************'
+    Open_Facilities = []
     for f in matrix_variable[0]:
-        if (solution.get_values(f) >
-            m.parameters.mip.tolerances.integrality.get()):
-            print '    Facility %s is open' % f
+        if solution.get_values(f) > 0 :
+            print 'Facility %s is open' % f
+            Open_Facilities.append(f[0])
         else:
-            print '    Facility %s is closed' % f        
-    print '*********************************************'
-    print '\n-----\nJames Gaboardi, 2015'
+            print 'Facility %s is closed' % f       
+    print '*******************************************************'
+    print 'Density of Facilities to Cover All Demand = ', len(Open_Facilities)
+    print 'Solution Time (minutes)                  = ', round(t2/60, 5)
+    print '*******************************************************'
+    print '    -- The Set Cover Location Problem CPLEX -- '
+    print '    --         James Gaboardi, 2016         -- '
     m.write('path.lp')
     
 ########################################################   
 
  # Cost Matrix
-Sites = 8
+Sites = 200
 
 Cost_Matrix = np.random.uniform(1, 20, Sites*Sites)
 Cost_Matrix = Cost_Matrix.reshape(Sites,Sites)
