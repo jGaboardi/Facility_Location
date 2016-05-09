@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 GNU LESSER GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
@@ -5,6 +7,17 @@ GNU LESSER GENERAL PUBLIC LICENSE
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
 '''
+'''
+Adapted from:   
+    S. L. Hakimi. 
+    1964. 
+    Optimum Locations of Switching Centers and 
+                    the Absolute Centers and Medians of a Graph. 
+    Operations Research. 
+    12 (3):450-459.
+'''
+
+
 
 # Building and Optimizing a p-median facility location problem
 #        in Python/cplex.CPLEX
@@ -12,140 +25,118 @@ GNU LESSER GENERAL PUBLIC LICENSE
 import numpy as np
 import cplex as cp
 import time
-t1 = time.time()
+np.random.seed(352)
 
-#     1. Read In Data
-# Weights Vector
-#Ai = np.fromfile('path/Ai.txt', dtype=int, sep='\n')
-#Ai = Ai.reshape(4,1)
-# Cost Matrix
-#Cij = np.fromfile('path/Cij.txt', dtype=float, sep='\n')
-#Cij = Cij.reshape(4,4)
-# Cost Coefficients for Decision Variables
-#Sij = Ai * Cij
-#Sij =  [[    0, 13000,  8000, 15000],
-#         [15600,     0, 14400, 13200],
-#         [ 8800, 13200,     0, 11000],
-#         [18750, 13750, 12500,     0]]
+def Cplex_pMedian(Ai, Cij, p_facilities):
+    
+    t1 = time.time()
+    
+    Cij = Cost_Matrix.reshape(client_vector,service_vector)    
+    Ai = Client_Weights.reshape(client_vector, 1)
+    Sij = Cij * Ai
 
-# CREATE
-# Cost Matrix
-Cij = np.random.randint(100, 1000, 50000)
-Cij = Cij.reshape(500,100)
-# Weights Matrix
-Ai = np.random.randint(1, 100, 500)
-Ai = Ai.reshape(len(Ai), 1)
-# Demand Sum
-AiSum = np.sum(Ai)
-# Weighted Cost Coefficients for Decision Variables
-Sij = Ai * Cij
+    # Indices & Variable Names
+    client_nodes = range(len(Sij))
+    service_nodes = range(len(Sij[0]))
 
-# Indices & Variable Names
-client_nodes = range(len(Sij))
-service_nodes = range(len(Sij[0]))
+    all_nodes_len = len(Sij) * len(Sij[0])
+    ALL_nodes_range = range(all_nodes_len)
 
-all_nodes = len(Sij) * len(Sij[0])
-ALL_nodes = range(all_nodes)
+    m = cp.Cplex()                                      # Create model
+    m.parameters.emphasis.mip.set(2)                    # Set MIP emphasis ==> Optimal
+    m.set_problem_type(m.problem_type.LP)               # Set problem type
+    m.objective.set_sense(m.objective.sense.minimize)   # Objective        ==>  Minimize
 
-x = 'x'
-cli_var = []
-for i in client_nodes:
-    for j in service_nodes:
-        temp = x + str(i+1) + '_' + str(j+1)
-        cli_var.append(temp)
-client_var = np.array(cli_var)
-client_var = client_var.reshape(len(Sij),len(Sij[0]))
+    client_var = []
+    for orig in client_nodes:
+            client_var.append([])
+            for dest in service_nodes:
+                client_var[orig].append('x'+str(orig+1)+'_'+str(dest+1))
 
-y = 'y'
-fac_var = []
-for i in service_nodes:
-    temp = y + str(i+1)
-    fac_var.append(temp)
-facility_var = np.array(fac_var)
-facility_var = facility_var.reshape(1,len(Sij[0]))
+    fac_var = []
+    for dest in service_nodes:
+            fac_var.append([])
+            fac_var[dest].append('y' + str(dest+1))
 
+    # Add Client Decision Variables
+    m.variables.add(names = [client_var[i][j] for i in client_nodes 
+                                              for j in service_nodes],
+                            obj = [Sij[i][j] for i in client_nodes 
+                                             for j in service_nodes], 
+                            lb = [0] * all_nodes_len, 
+                            ub = [1] * all_nodes_len, 
+                            types = ['B'] * all_nodes_len)
+    # Add Service Decision Variable
+    m.variables.add(names = [fac_var[j][0] for j in service_nodes],
+                            lb = [0] * len(Sij[0]), 
+                            ub = [1] * len(Sij[0]), 
+                            types = ['B'] * len(Sij[0]))
 
-#     2. Create Model and Add Variables
-# Create Model
-m = cp.Cplex()
-# Problem Name
-m.set_problem_name('\n -- P-Median -- ')
-print m.get_problem_name()
+    # Add Assignment Constraints
+    for orig in client_nodes:       
+        assignment_constraints = ([client_var[orig][dest] 
+                                                for dest in service_nodes],                           
+                                                [1] * len(Sij[0]))
+        m.linear_constraints.add(lin_expr = [assignment_constraints],                 
+                                    senses = ['E'], 
+                                    rhs = [1]);
+    # Add Facility Constraint
+    facility_constraint = cp.SparsePair(ind = [fac_var[j][0] for j in service_nodes], 
+                                        val = [1.0] * len(Sij[0]))
+    m.linear_constraints.add(lin_expr = [facility_constraint],
+                                    senses = ['E'],
+                                    rhs = [p_facilities])
+    
+    # Add Opening Constraint
+    OC = [[client_var[i][j]] + [fac_var[j][0]] for i in client_nodes 
+                                               for j in service_nodes]
+    for oc in OC:
+        opening_constraints = [oc, [-1.0, 1.0]]
+        m.linear_constraints.add(lin_expr = [opening_constraints], 
+                                    senses = ['G'], 
+                                    rhs = [0])
+                     
+    # Optimize and Print Results
+    m.solve()
+    t2 = round(time.time()-t1, 5)
+    m.write('path.lp')
+    solution = m.solution
+    print '*******************************************************************'
+    for f in fac_var:
+        if solution.get_values(f[0]) > 0 :
+            print 'Facility %s is open' % f[0]
+    print '*******************************************************************'
+    print 'Solution status    = ' , solution.get_status(), ':',\
+                                     solution.status[solution.get_status()]
+    print 'Facilities [p]     = ' , p_facilities
+    print 'Total cost         = ' , round(solution.get_objective_value(),5)
+    print 'Real Time          = ' , t2, 'sec.'        
+    print 'Matrix Shape       = ' , Sij.shape
+    print '*******************************************************************'
+    print '\n -- The p-Median Problem -- CPLEX'
+    print ' James Gaboardi, 2016'
 
-# Problem Type  ==>  Linear Programming
-m.set_problem_type(m.problem_type.LP)
-# Set MIP Emphasis to '2' --> Optimal
-m.parameters.emphasis.mip.set(2)
-print m.parameters.get_changed()
-print '\nProblem Type\n    ' + str(m.problem_type[m.get_problem_type()])
-# Objective Function Sense  ==>  Minimize
-m.objective.set_sense(m.objective.sense.minimize)
-print 'Objective Sense\n    ' + str(m.objective.sense[m.objective.get_sense()])
-# Add Client Decision Variables
-m.variables.add(names = [cli_var[i] for i in ALL_nodes],
-                        obj = [Sij[i][j] for i in client_nodes for j in service_nodes], 
-                        lb = [0] * all_nodes, 
-                        ub = [1] * all_nodes, 
-                        types = ['B'] * all_nodes)
-# Add Service Decision Variable
-m.variables.add(names = [fac_var[j] for j in service_nodes],
-                        lb = [0] * len(Sij[0]), 
-                        ub = [1] * len(Sij[0]), 
-                        types = ['B'] * len(Sij[0]))
+############################################################################################################  
+    
+# Data can be read-in or simulated
+client_vector =  4             # Density of clients
+service_vector = 3             # Density of service facilities
+P = candidate_facilities = 1
 
-#    3. Add Constraints
-# Add Assignment Constraints
-for orig in client_nodes:       
-    assignment_constraints = cp.SparsePair(ind = [client_var[orig][dest] 
-                                            for dest in service_nodes],                           
-                                            val = [1] * len(Sij[0]))
-    m.linear_constraints.add(lin_expr = [assignment_constraints],                 
-                                senses = ['E'], 
-                                rhs = [1]);
-# Add Facility Constraint
-facility_constraint = cp.SparsePair(ind = fac_var, 
-                                    val = [1.0] * len(Sij[0]))
-m.linear_constraints.add(lin_expr = [facility_constraint],
-                                senses = ['E'],
-                                rhs = [1])
-# Add Opening Constraint
-cli_var_open = []
-for i in client_nodes:
-    for j in service_nodes:
-        temp = x + str(i+1) + '_' + str(j+1)
-        cli_var_open.append(temp)
-fac_var_open = []
-for i in client_nodes:
-    for j in service_nodes:
-        temp = y + str(j+1)
-        fac_var_open.append(temp)
-l = []
-for i in ALL_nodes:
-    l.append([cli_var_open[i]]+[fac_var_open[i]])
-for i in l:
-    opening_constraint = cp.SparsePair(ind = i, val = [-1.0, 1.0])
-    m.linear_constraints.add(lin_expr = [opening_constraint], 
-                                senses = ['G'], 
-                                rhs = [0])
-                                
-#    4. Optimize and Print Results
-m.solve()
-m.write('/Users/jgaboardi/Desktop/LPpath.lp')
-solution = m.solution
-# solution.get_status() returns an integer code
-print 'Solution status = ' , solution.get_status(), ':',
-# the following line prints the corresponding string
-print solution.status[solution.get_status()]
-# Display solution.
-print 'Total cost = ' , solution.get_objective_value()
-print 'Determination Time = ', m.get_dettime(), 'ticks'
-print 'Real Time to Optimize (sec.): *', time.time()-t1
-print '****************************'
-for f in fac_var:
-    if (solution.get_values(f) >
-        m.parameters.mip.tolerances.integrality.get()):
-        print '    Facility %s is open' % f
-    else:
-        print '    Facility %s is closed' % f           
-print '****************************'
-print '\n-----\nJames Gaboardi, 2015'
+# Client Weights
+Client_Weights = np.random.uniform(2, 
+                                   20, 
+                                   client_vector)
+
+# Cost Matrix of random floats 
+Cost_Matrix = np.random.uniform(10, 
+                                30, 
+                                client_vector*service_vector)
+
+# Call Function
+Cplex_pMedian(Ai=Client_Weights,
+                Cij=Cost_Matrix, 
+                p_facilities=P)
+'''
+James Gaboardi, 2016
+'''
