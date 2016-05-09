@@ -19,21 +19,21 @@ def Cplex_SetCover(Cij, S):
     
     # 
     Aij = []
-    print Aij
+    
     for i in Cij:
-        for j in Cij:
+        print i
+        for j in i:
+            print j
             if j <= S:
                 outtext = 1
             else:
                 outtext = 0
             Aij.append(outtext)
-    
-    Cij = np.array(Cij)
-    Cij = Cij.reshape(4,4)
+    print Aij
     rows, cols = Cij.shape
     
     Aij = np.array(Aij)
-    Aij = Aij.reshape(4,4)
+    Aij = Aij.reshape(rows,cols)
     
     client_nodes = range(len(Cij[0]))
 
@@ -42,6 +42,8 @@ def Cplex_SetCover(Cij, S):
     Nodes = range(len(Cij))
     all_nodes = len(Cij) * len(Cij)
     ALL_nodes = range(all_nodes)
+    
+    
     x = 'x'
     cli_var = []
     for i in Nodes:
@@ -50,6 +52,8 @@ def Cplex_SetCover(Cij, S):
             cli_var.append(temp)
     client_var = np.array(cli_var)
     client_var = client_var.reshape(4,4)
+    
+    
     results_var = []
     for i in Nodes:
         temp = x + str(i+1)
@@ -114,7 +118,7 @@ Sites = 8
 
 Cost_Matrix = np.random.uniform(1, 10, Sites*Sites)
 Cost_Matrix = Cost_Matrix.reshape(Sites,Sites)
-print Cost_Matrix
+print Cost_Matrix[0][0]
 Minimum_Distance = 4
 
 Cplex_SetCover(Cij=Cost_Matrix, S=Minimum_Distance)    
