@@ -21,7 +21,7 @@ import numpy as np
 import time
 np.random.seed(352)
 
-def CplexPCenter(Cij, p):
+def Cplex_pCenter(Cij, p):
     t1 = time.time()
 
     m = cp.Cplex()                                      # Create model
@@ -129,4 +129,4 @@ Cost_Matrix = Cost_Matrix.reshape(3,3)
 
 p_facilities = 1
 
-CplexPCenter(Cij=Cost_Matrix, p=p_facilities)
+Cplex_pCenter(Cij=Cost_Matrix, p=p_facilities)
