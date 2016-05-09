@@ -14,27 +14,27 @@ import cplex as cp
 import time
 np.random.seed(352)
 
-def Cplex_PCenter(Cij, p):
+def Cplex_SetCover(Cij, S):
     t1 = time.time()
     
-    #     1. Read In Data
-    # Cost Vector
-    Cij = [0, 13, 8, 15, 13, 0, 12, 11, 8, 12, 0, 10, 15, 11, 10, 0]
-    # Create Aij: Determine Aij (nodes within S)
-    # S --> 1 = served; 0 = unserved
-    S = 10
+    # 
     Aij = []
+    print Aij
     for i in Cij:
-        if i <= S:
-            outtext = 1
-        else:
-            outtext = 0
-        Aij.append(outtext)
+        for j in Cij:
+            if j <= S:
+                outtext = 1
+            else:
+                outtext = 0
+            Aij.append(outtext)
+    
     Cij = np.array(Cij)
     Cij = Cij.reshape(4,4)
     rows, cols = Cij.shape
+    
     Aij = np.array(Aij)
     Aij = Aij.reshape(4,4)
+    
     client_nodes = range(len(Cij[0]))
 
     # Indices & Variable Names
@@ -90,11 +90,9 @@ def Cplex_PCenter(Cij, p):
     #    4. Optimize and Print Results
     m.solve()
     solution = m.solution
-    # solution.get_status() returns an integer code
-    print 'Solution status = ' , solution.get_status(), ':',
-    # the following line prints the corresponding string
-    print solution.status[solution.get_status()]
-    # Display solution.
+    
+    
+    
     print 'Total cost = ' , solution.get_objective_value()
     print 'Determination Time = ', m.get_dettime(), 'ticks'
     print 'Real Time to Optimize (sec.): *', time.time()-t1
@@ -112,9 +110,11 @@ def Cplex_PCenter(Cij, p):
 ########################################################   
 
  # Cost Matrix
-Cost_Matrix = np.random.uniform(1, 10, 9)
-Cost_Matrix = Cost_Matrix.reshape(3,3)
+Sites = 8
 
-p_facilities = 1
+Cost_Matrix = np.random.uniform(1, 10, Sites*Sites)
+Cost_Matrix = Cost_Matrix.reshape(Sites,Sites)
+print Cost_Matrix
+Minimum_Distance = 4
 
-CplexPCenter(Cij=Cost_Matrix, p=p_facilities)    
+Cplex_SetCover(Cij=Cost_Matrix, S=Minimum_Distance)    

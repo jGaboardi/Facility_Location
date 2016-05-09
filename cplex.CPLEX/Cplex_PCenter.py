@@ -130,3 +130,6 @@ Cost_Matrix = Cost_Matrix.reshape(3,3)
 p_facilities = 1
 
 Cplex_pCenter(Cij=Cost_Matrix, p=p_facilities)
+'''
+James Gaboardi, 2016
+'''
