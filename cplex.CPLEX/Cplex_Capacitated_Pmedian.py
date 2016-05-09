@@ -106,18 +106,21 @@ def Cplex_pMedian_Capacitated(dij, qi, Qy, p_facilities):
     m.write('path.lp')
     solution = m.solution
     print '*******************************************************************'
-    for f in fac_var:
-        if solution.get_values(f[0]) > 0 :
-            print 'Facility %s is open' % f[0]
+    Open_Capacity = 0
+    for f in range(len(fac_var)):
+        if solution.get_values(fac_var[f][0]) > 0 :
+            print 'Facility %s is open' % fac_var[f][0], 'with a capacity of', Qy[f]
+            Open_Capacity += Qy[f]
     print '*******************************************************************'
-    print 'Solution status    = ' , solution.get_status(), ':',\
-                                     solution.status[solution.get_status()]
-    print 'Facilities [p]     = ' , p_facilities
-    print 'Total Cost         = ' , round(solution.get_objective_value(),5)
-    print 'Total Clients      = ' , qi.sum()
-    print 'Total Capacity     = ' , Qy.sum()
-    print 'Real Time          = ' , t2, 'sec.'        
-    print 'Matrix Shape       = ' , dij.shape
+    print 'Solution status             = ' , solution.get_status(), ':',\
+                                                solution.status[solution.get_status()]
+    print 'Facilities [p]              = ' , p_facilities
+    print 'Total Cost                  = ' , round(solution.get_objective_value(),5)
+    print 'Total Clients               = ' , qi.sum()
+    print 'Capacity of Open Facilities = ' , Open_Capacity
+    print 'Total Capacity              = ' , Qy.sum()
+    print 'Real Time                   = ' , t2, 'sec.'        
+    print 'Matrix Shape                = ' , dij.shape
     print '*******************************************************************'
     print '\n -- The p-Median Problem -- CPLEX'
     print ' James Gaboardi, 2016'
@@ -129,17 +132,21 @@ client_vector =  10             # Density of clients
 service_vector = 4              # Density of service facilities
 P = candidate_facilities = 2
 
-# Client Weights
-Client_Weights = np.random.randint(5, 
-                                   10, 
+# Simulated Client Weights
+Client_Weights = np.random.randint(8, 
+                                   12, 
                                    client_vector)
 
-# Capacity
+# Simulated Capacity
 Capacity = np.random.randint(50, 
                              65, 
                              service_vector)
 
-# Cost Matrix of random floats 
+# Fixed Capacity
+Fixed_Capacity = np.array([50] * 
+                            service_vector)
+
+# Cost Matrix of Simulated Floats 
 Cost_Matrix = np.random.uniform(10, 
                                 30, 
                                 client_vector*service_vector)
@@ -147,7 +154,7 @@ Cost_Matrix = np.random.uniform(10,
 # Call Function
 Cplex_pMedian_Capacitated(dij=Cost_Matrix,
                 qi=Client_Weights,
-                Qy=Capacity,
+                Qy=Capacity,        # or Capacity
                 p_facilities=P)
 '''
 James Gaboardi, 2016
