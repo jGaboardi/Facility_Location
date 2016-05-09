@@ -17,9 +17,7 @@ Adapted from:
     12 (3):450-459.
 '''
 
-
-
-# Building and Optimizing a p-median facility location problem
+# Building and Optimizing a p-Median facility location problem
 #        in Python/cplex.CPLEX
 
 import numpy as np
@@ -27,13 +25,13 @@ import cplex as cp
 import time
 np.random.seed(352)
 
-def Cplex_pMedian(Ai, Cij, p_facilities):
+def Cplex_pMedian(ai, Cij, p_facilities):
     
     t1 = time.time()
     
     Cij = Cost_Matrix.reshape(client_vector,service_vector)    
-    Ai = Client_Weights.reshape(client_vector, 1)
-    Sij = Cij * Ai
+    ai = Client_Weights.reshape(client_vector, 1)
+    Sij = Cij * ai
 
     # Indices & Variable Names
     client_nodes = range(len(Sij))
@@ -109,7 +107,8 @@ def Cplex_pMedian(Ai, Cij, p_facilities):
     print 'Solution status    = ' , solution.get_status(), ':',\
                                      solution.status[solution.get_status()]
     print 'Facilities [p]     = ' , p_facilities
-    print 'Total cost         = ' , round(solution.get_objective_value(),5)
+    print 'Total Cost         = ' , round(solution.get_objective_value(),5)
+    print 'Total Clients      = ' , ai.sum()
     print 'Real Time          = ' , t2, 'sec.'        
     print 'Matrix Shape       = ' , Sij.shape
     print '*******************************************************************'
@@ -124,7 +123,7 @@ service_vector = 3             # Density of service facilities
 P = candidate_facilities = 1
 
 # Client Weights
-Client_Weights = np.random.uniform(2, 
+Client_Weights = np.random.randint(2, 
                                    20, 
                                    client_vector)
 
@@ -134,7 +133,7 @@ Cost_Matrix = np.random.uniform(10,
                                 client_vector*service_vector)
 
 # Call Function
-Cplex_pMedian(Ai=Client_Weights,
+Cplex_pMedian(ai=Client_Weights,
                 Cij=Cost_Matrix, 
                 p_facilities=P)
 '''
