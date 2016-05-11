@@ -85,7 +85,8 @@ def Cplex_SetCover(Cij, S):
             print 'Facility %s is closed' % f       
     print '*******************************************************'
     print 'Density of Facilities to Cover All Demand = ', len(Open_Facilities)
-    print 'Solution Time (minutes)                  = ', round(t2/60, 5)
+    print 'Minimum Distance for Cover (S)            = ', S
+    print 'Solution Time (minutes)                   = ', round(t2/60, 5)
     print '*******************************************************'
     print '    -- The Set Cover Location Problem CPLEX -- '
     print '    --         James Gaboardi, 2016         -- '
@@ -94,7 +95,7 @@ def Cplex_SetCover(Cij, S):
 ########################################################   
 
  # Cost Matrix
-Sites = 200
+Sites = 20
 
 Cost_Matrix = np.random.uniform(1, 20, Sites*Sites)
 Cost_Matrix = Cost_Matrix.reshape(Sites,Sites)
