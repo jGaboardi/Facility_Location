@@ -54,8 +54,6 @@ def Cplex_pCenter_Capacitated(dij, qi, Qy, p_facilities):
     # Add Client Decision Variables
     m.variables.add(names = [client_variable[i][j] for i in client_nodes 
                                               for j in service_nodes],
-                            obj = [dij[i][j] for i in client_nodes 
-                                             for j in service_nodes], 
                             lb = [0] * all_nodes_len, 
                             ub = [1] * all_nodes_len, 
                             types = ['B'] * all_nodes_len)
@@ -123,22 +121,22 @@ def Cplex_pCenter_Capacitated(dij, qi, Qy, p_facilities):
     print 'Solution status             = ' , solution.get_status(), ':',\
                                                 solution.status[solution.get_status()]
     print 'Facilities [p]              = ' , p_facilities
-    print 'Total Cost                  = ' , round(solution.get_objective_value(),5)
+    print 'Minimized Maximum Cost      = ' , solution.get_values(W)#round(solution.get_objective_value(),5)
     print 'Total Clients               = ' , qi.sum()
     print 'Capacity of Open Facilities = ' , Open_Capacity
     print 'Total Capacity              = ' , Qy.sum()
     print 'Real Time                   = ' , t2, 'sec.'        
     print 'Matrix Shape                = ' , dij.shape
     print '*******************************************************************'
-    print '\n -- The p-Median Problem -- CPLEX'
-    print ' James Gaboardi, 2016'
+    print '\n -- The Capacitated p-Center Problem -- CPLEX'
+    print '        --  James Gaboardi, 2016 -- '
 
 ############################################################################################################  
     
 # Data can be read-in or simulated
-client_vector =  10             # Density of clients
-service_vector = 4              # Density of service facilities
-P = candidate_facilities = 2
+client_vector =  3             # Density of clients
+service_vector = 2              # Density of service facilities
+P = candidate_facilities = 1
 
 # Simulated Client Weights
 Client_Weights = np.random.randint(8, 

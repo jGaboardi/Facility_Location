@@ -122,8 +122,8 @@ def Cplex_pMedian_Capacitated(dij, qi, Qy, p_facilities):
     print 'Real Time                   = ' , t2, 'sec.'        
     print 'Matrix Shape                = ' , dij.shape
     print '*******************************************************************'
-    print '\n -- The p-Median Problem -- CPLEX'
-    print ' James Gaboardi, 2016'
+    print '\n -- The Capacitated p-Median Problem -- CPLEX'
+    print '       --  James Gaboardi, 2016 -- '
 
 ############################################################################################################  
     
