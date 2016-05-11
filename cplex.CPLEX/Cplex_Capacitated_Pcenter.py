@@ -5,9 +5,14 @@ GNU LESSER GENERAL PUBLIC LICENSE
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
 '''
-
-
-
+'''
+Adapted From:
+    Özsoy, F. Aykut.
+    Pinar, M. Ç.
+    An exact algorithm for the capacitated vertex p-center problem.
+    Computers and Operations Research.
+    33(5):1420-1436.
+'''
 
 # Building and Optimizing a Capacitated p-center facility location problem
 #        in Python/cplex.CPLEX
