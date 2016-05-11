@@ -131,7 +131,7 @@ def Cplex_pCenter_Capacitated(dij, qi, Qy, p_facilities):
     print 'Solution status             = ' , solution.get_status(), ':',\
                                                 solution.status[solution.get_status()]
     print 'Facilities [p]              = ' , p_facilities
-    print 'Minimized Maximum Cost      = ' , solution.get_values(W)#round(solution.get_objective_value(),5)
+    print 'Minimized Maximum Cost      = ' , round(solution.get_values(W), 5)
     print 'Total Clients               = ' , qi.sum()
     print 'Capacity of Open Facilities = ' , Open_Capacity
     print 'Total Capacity              = ' , Qy.sum()
