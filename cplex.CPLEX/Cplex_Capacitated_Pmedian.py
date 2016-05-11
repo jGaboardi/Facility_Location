@@ -9,12 +9,12 @@ GNU LESSER GENERAL PUBLIC LICENSE
 '''
 '''
 Adapted from:   
-    S. L. Hakimi. 
-    1964. 
-    Optimum Locations of Switching Centers and 
-                    the Absolute Centers and Medians of a Graph. 
-    Operations Research. 
-    12 (3):450-459.
+    Lorena, Luiz A. N.
+    Senne, Edson L. F. 
+    2004. 
+    A column generation approach to capacitated p-median problems 
+    Computers and Operations Research. 
+    31 (6):863-876.
 '''
 
 # Building and Optimizing a p-Median facility location problem
