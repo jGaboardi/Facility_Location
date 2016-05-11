@@ -45,49 +45,49 @@ def Cplex_pMedian(ai, Cij, p_facilities):
     m.set_problem_type(m.problem_type.LP)               # Set problem type
     m.objective.set_sense(m.objective.sense.minimize)   # Objective        ==>  Minimize
 
-    client_var = []
+    client_variable = []
     for orig in client_nodes:
-            client_var.append([])
+            client_variable.append([])
             for dest in service_nodes:
-                client_var[orig].append('x'+str(orig+1)+'_'+str(dest+1))
+                client_variable[orig].append('x'+str(orig+1)+'_'+str(dest+1))
 
-    fac_var = []
+    facility_variable = []
     for dest in service_nodes:
-            fac_var.append([])
-            fac_var[dest].append('y' + str(dest+1))
+            facility_variable.append([])
+            facility_variable[dest].append('y' + str(dest+1))
 
     # Add Client Decision Variables
-    m.variables.add(names = [client_var[i][j] for i in client_nodes 
-                                              for j in service_nodes],
+    m.variables.add(names = [client_variable[i][j] for i in client_nodes 
+                                                   for j in service_nodes],
                             obj = [Sij[i][j] for i in client_nodes 
                                              for j in service_nodes], 
                             lb = [0] * all_nodes_len, 
                             ub = [1] * all_nodes_len, 
                             types = ['B'] * all_nodes_len)
     # Add Service Decision Variable
-    m.variables.add(names = [fac_var[j][0] for j in service_nodes],
+    m.variables.add(names = [facility_variable[j][0] for j in service_nodes],
                             lb = [0] * len(Sij[0]), 
                             ub = [1] * len(Sij[0]), 
                             types = ['B'] * len(Sij[0]))
 
     # Add Assignment Constraints
     for orig in client_nodes:       
-        assignment_constraints = ([client_var[orig][dest] 
+        assignment_constraints = ([client_variable[orig][dest] 
                                                 for dest in service_nodes],                           
                                                 [1] * len(Sij[0]))
         m.linear_constraints.add(lin_expr = [assignment_constraints],                 
                                     senses = ['E'], 
                                     rhs = [1]);
     # Add Facility Constraint
-    facility_constraint = cp.SparsePair(ind = [fac_var[j][0] for j in service_nodes], 
-                                        val = [1.0] * len(Sij[0]))
+    facility_constraint = ([facility_variable[j][0] for j in service_nodes], 
+                                        [1.0] * len(Sij[0]))
     m.linear_constraints.add(lin_expr = [facility_constraint],
                                     senses = ['E'],
                                     rhs = [p_facilities])
     
     # Add Opening Constraint
-    OC = [[client_var[i][j]] + [fac_var[j][0]] for i in client_nodes 
-                                               for j in service_nodes]
+    OC = [[client_variable[i][j]] + [facility_variable[j][0]] for i in client_nodes 
+                                                              for j in service_nodes]
     for oc in OC:
         opening_constraints = [oc, [-1.0, 1.0]]
         m.linear_constraints.add(lin_expr = [opening_constraints], 
@@ -100,7 +100,7 @@ def Cplex_pMedian(ai, Cij, p_facilities):
     m.write('path.lp')
     solution = m.solution
     print '*******************************************************************'
-    for f in fac_var:
+    for f in facility_variable:
         if solution.get_values(f[0]) > 0 :
             print 'Facility %s is open' % f[0]
     print '*******************************************************************'

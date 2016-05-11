@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 GNU LESSER GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
@@ -5,7 +7,15 @@ GNU LESSER GENERAL PUBLIC LICENSE
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
 '''
-
+'''
+Originally Published:
+    Church, R. L.
+    C. ReVelle.
+    1974.
+    The Maximal Covering Location Problem. 
+    Papers of the Regional Science Association.
+    32:101-18.
+'''
 # Building and Optimizing a Maximum Cover Location Problem problem in 
 #        Python/cplex.CPLEX
 
@@ -14,57 +24,85 @@ import cplex as cp
 import time
 t1 = time.time()
 
-#     1. Read In Data
-# Cost Vector
-Cij = [0, 13, 8, 15, 13, 0, 12, 11, 8, 12, 0, 10, 15, 11, 10, 0]
-# Create Aij: Determine Aij (nodes within S)
-# S --> 1 = served; 0 = unserved
-S = 8
-Aij = []
-for i in Cij:
-    if i <= S:
-        outtext = 1
-    else:
-        outtext = 0
-    Aij.append(outtext)
-Cij = np.array(Cij)
-Cij = Cij.reshape(4,4)
-rows, cols = Cij.shape
-Aij = np.array(Aij)
-Aij = Aij.reshape(4,4)
+def Cplex_MaxCover(ai, Cij, p_facilities):
+
+
+# Is the value of Cij within S?
+    Aij = []
+    for i in Cij:
+        for j in i:
+            if j <= S:
+                Aij.append(1)
+            else:
+                Aij.append(0)
+    Aij = np.array(Aij)
+    Aij = Aij.reshape(Cij.shape)
+
+    # Indices & Variable Names
+    nodes_length = len(Cij)
+    nodes_range = range(len(Cij))
+    
+    # Index for Serialized Variables      
+    matrix_variable = [['x' + str(orig+100001) for orig in nodes_range]] * nodes_length  
+
+
+
 Hi = [1000, 1200, 1100, 1250]
+
+
 client_nodes = range(len(Cij[0]))
 
 # Indices & Variable Names
 nodes = len(Cij)
 Nodes = range(len(Cij))
-x = 'x'
-cli_var = []
-for i in Nodes:
-    for j in Nodes:
-        temp = x + str(j+1)
-        cli_var.append(temp)
-y = 'y'
-fac_var = []
-for i in Nodes:
-    temp = y + str(i+1)
-    fac_var.append(temp)
 
-#     2. Create Model and Add Variables
-# Create Model
-m = cp.Cplex()
-# Problem Name
-m.set_problem_name('\n -- MCLP -- ')
-print m.get_problem_name()
-# Problem Type  ==>  Linear Programming
-m.set_problem_type(m.problem_type.LP)
-# Set MIP Emphasis to '2' --> Optimal
-m.parameters.emphasis.mip.set(2)
-print m.parameters.get_changed()
-print '\nProblem Type\n    ' + str(m.problem_type[m.get_problem_type()])
-# Objective Function Sense  ==>  Maximize
-m.objective.set_sense(m.objective.sense.maximize)
-print 'Objective Sense\n    ' + str(m.objective.sense[m.objective.get_sense()])
+    
+    t1 = time.time()
+    
+    Cij = Cost_Matrix.reshape(client_vector,service_vector)    
+    ai = Client_Weights.reshape(client_vector, 1)
+    Sij = Cij * ai
+
+    # Indices & Variable Names
+    client_nodes = range(len(Sij))
+    service_nodes = range(len(Sij[0]))
+
+    all_nodes_len = len(Sij) * len(Sij[0])
+    ALL_nodes_range = range(all_nodes_len)
+
+    m = cp.Cplex()                                      # Create model
+    m.parameters.emphasis.mip.set(2)                    # Set MIP emphasis ==> Optimal
+    m.set_problem_type(m.problem_type.LP)               # Set problem type
+    m.objective.set_sense(m.objective.sense.minimize)   # Objective        ==>  Minimize
+
+    client_variable = []
+    for orig in client_nodes:
+            client_variable.append([])
+            for dest in service_nodes:
+                client_variable[orig].append('x'+str(orig+1)+'_'+str(dest+1))
+
+    facility_variable = []
+    for dest in service_nodes:
+            facility_variable.append([])
+            facility_variable[dest].append('y' + str(dest+1))
+
+    # Add Client Decision Variables
+    m.variables.add(names = [client_variable[i][j] for i in client_nodes 
+                                                   for j in service_nodes],
+                            obj = [Sij[i][j] for i in client_nodes 
+                                             for j in service_nodes], 
+                            lb = [0] * all_nodes_len, 
+                            ub = [1] * all_nodes_len, 
+                            types = ['B'] * all_nodes_len)
+    # Add Service Decision Variable
+    m.variables.add(names = [facility_variable[j][0] for j in service_nodes],
+                            lb = [0] * len(Sij[0]), 
+                            ub = [1] * len(Sij[0]), 
+                            types = ['B'] * len(Sij[0]))
+
+
+
+
 # Add Client Decision Variables
 m.variables.add(names = [cli_var[i] for i in Nodes],  
                         obj = [Hi[i] for i in Nodes], 
@@ -100,23 +138,51 @@ m.linear_constraints.add(lin_expr = [facility_constraint],
                                 senses = ['L'],
                                 rhs = [2])
 
-#    4. Optimize and Print Results
-m.solve()
-solution = m.solution
-# solution.get_status() returns an integer code
-print 'Solution status = ' , solution.get_status(), ':',
-# the following line prints the corresponding string
-print solution.status[solution.get_status()]
-# Display solution.
-print 'Total cost = ' , solution.get_objective_value()
-print 'Determination Time = ', m.get_dettime(), 'ticks'
-print 'Real Time to Optimize (sec.): *', time.time()-t1
-print '**************'
-for f in fac_var:
-    if (solution.get_values(f) >
-        m.parameters.mip.tolerances.integrality.get()):
-        print '    Facility %s is open' % f
-        else:
-        print '    Facility %s is closed' % f
-print '\n-----\nJames Gaboardi, 2015'
-m.write('path.lp')
+        # Optimize and Print Results
+        m.solve()
+        t2 = round(time.time()-t1, 5)
+        m.write('path.lp')
+        solution = m.solution
+        print '*******************************************************************'
+        for f in facility_variable:
+            if solution.get_values(f[0]) > 0 :
+                print 'Facility %s is open' % f[0]
+        print '*******************************************************************'
+        print 'Solution status    = ' , solution.get_status(), ':',\
+                                         solution.status[solution.get_status()]
+        print 'Facilities [p]     = ' , p_facilities
+        print 'Total Cost         = ' , round(solution.get_objective_value(),5)
+        print 'Total Clients      = ' , ai.sum()
+        print 'Real Time          = ' , t2, 'sec.'        
+        print 'Matrix Shape       = ' , Sij.shape
+        print '*******************************************************************'
+        print '\n -- The Maximal Cover Location Problem -- CPLEX'
+        print '          -- James Gaboardi, 2016 -- '
+
+############################################################################################################  
+
+
+# Data can be read-in or simulated
+client_vector =  4             # Density of clients
+service_vector = 3             # Density of service facilities
+P = candidate_facilities = 1
+Minimum_Distance =7.
+
+# Client Weights
+Client_Weights = np.random.randint(2, 
+                                   20, 
+                                   client_vector)
+
+# Cost Matrix of random floats 
+Cost_Matrix = np.random.uniform(10, 
+                                30, 
+                                client_vector*service_vector)
+
+# Call Function
+Cplex_pMedian(ai=Client_Weights,
+                Cij=Cost_Matrix, 
+                p_facilities=P,
+                S=Minimum_Distance)
+'''
+James Gaboardi, 2016
+'''
