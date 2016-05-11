@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 GNU LESSER GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
@@ -20,7 +22,7 @@ Adapted From:
 import numpy as np
 import cplex as cp
 import time
-t1 = time.time()
+np.random.seed(352)
 
 def Cplex_pCenter_Capacitated(dij, qi, Qy, p_facilities):
     
