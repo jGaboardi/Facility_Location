@@ -17,6 +17,7 @@ GNU LESSER GENERAL PUBLIC LICENSE
 import numpy as np
 import gurobipy as gbp
 import time
+np.random.seed(352)
 t1 = time.time()
 
 #           1. Read In (or Create) Data
@@ -27,13 +28,25 @@ Cij = [0, 13, 8, 15, 13, 0, 12, 11, 8, 12, 0, 10, 15, 11, 10, 0]
 #Hi = np.array([1000, 1200, 1100, 1250])
 '''
 # Cost Vector
-Cij = list(np.random.randint(100, 1000, 25))
+#Cij = list(np.random.randint(100, 1000, 25))
+Cij = np.random.randint(2, 
+                                10, 
+                                4*4)
+
 # Demand
-Hi = np.random.randint(1, 100, 5)
+#Hi = np.random.randint(1, 100, 5)
+
+
+# Client Weights
+Hi = np.random.randint(2, 
+                        10, 
+                        4)
+
+
 HiSum = np.sum(Hi)
 # Create Aij: Determine Aij (nodes within S)
 # S --> 1 = served; 0 = unserved
-S = 300
+S = 7.
 Aij = []
 for i in Cij:
     if i <= S:
@@ -42,9 +55,9 @@ for i in Cij:
         outtext = 0
     Aij.append(outtext)
 Cij = np.array(Cij)
-Cij = Cij.reshape(5,5)
+Cij = Cij.reshape(4,4)
 Aij = np.array(Aij)
-Aij = Aij.reshape(5,5)
+Aij = Aij.reshape(4,4)
 
 client_nodes = range(len(Cij[0]))
 
@@ -79,7 +92,7 @@ for orig in client_nodes:
                                 for dest in client_nodes) - client_var[orig] >= 0,
                                 'Coverage_Constraint_%d' % orig)
 # Add Facility Constraint  --> [p ≤ 2]
-m.addConstr(gbp.quicksum(serv_var[dest] for dest in client_nodes) <= 2, 
+m.addConstr(gbp.quicksum(serv_var[dest] for dest in client_nodes) <= 1, 
                         "Facility_Constraint")
                         
 #     6. Optimize and Print Results
